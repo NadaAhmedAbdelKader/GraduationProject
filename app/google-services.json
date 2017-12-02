@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "569579699662",
+    "firebase_url": "https://graduation-4da3f.firebaseio.com",
+    "project_id": "graduation-4da3f",
+    "storage_bucket": "graduation-4da3f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569579699662:android:2096dc06d5a15037",
+        "android_client_info": {
+          "package_name": "com.switchak.switchak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "569579699662-1qe51a8amolqjc8lkt26m88f619a03ke.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.switchak.switchak",
+            "certificate_hash": "bd14447c430af75fe93648bbe8b0e249f6fdc136"
+          }
+        },
+        {
+          "client_id": "569579699662-0jfle49g8flf30dd3r7ctpjho48oh49j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.switchak.switchak",
+            "certificate_hash": "d9529ad50e63e3099de7bfc8734e96ac13070b5a"
+          }
+        },
+        {
+          "client_id": "569579699662-cqcutabadtbqe9e03eiri8vhjp6cktlh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4asS8A10MNHIziw2Jwaj53WgEQItafVE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "569579699662-cqcutabadtbqe9e03eiri8vhjp6cktlh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
