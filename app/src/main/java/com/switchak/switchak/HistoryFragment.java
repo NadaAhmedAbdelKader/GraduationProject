@@ -7,6 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -26,6 +35,9 @@ public class HistoryFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private LineChart chart;
+//    private LinearLayout linearLayout;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,8 +75,28 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
+        chart = (LineChart) rootView.findViewById(R.id.chart);
+
+//        linearLayout = (LinearLayout) rootView.findViewById(R.id.layout_history);
+//        linearLayout.addView(chart);
+
+        List<Entry> entries = new ArrayList<Entry>();
+
+        entries.add(new Entry(1, (float) 12.5));
+        entries.add(new Entry(2, (float) 17.5));
+        entries.add(new Entry(3, (float) 10));
+
+        LineDataSet dataSet = new LineDataSet(entries, "Label");
+//        dataSet.setColor();
+
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate();
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
