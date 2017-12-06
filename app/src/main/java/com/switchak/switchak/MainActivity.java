@@ -22,7 +22,8 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements HistoryFragment.OnFragmentInteractionListener,
-        NowFragment.OnFragmentInteractionListener {
+        NowFragment.OnFragmentInteractionListener,
+        CostFragment.OnFragmentInteractionListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -114,6 +115,8 @@ public class MainActivity extends AppCompatActivity
                 case 0:
                     return new HistoryFragment();
                 case 1:
+                    return new CostFragment();
+                case 2:
                     return new NowFragment();
                 default:
                     return null;
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 2;
+            return 3;
         }
 
         @Override
@@ -132,6 +135,8 @@ public class MainActivity extends AppCompatActivity
                 case 0:
                     return "HISTORY";
                 case 1:
+                    return "Cost";
+                case 2:
                     return "NOW";
                 default:
                     return null;
