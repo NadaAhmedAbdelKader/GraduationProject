@@ -8,6 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,7 +61,9 @@ public class CostFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -63,8 +73,25 @@ public class CostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_cost, container, false);
+        PieChart pieChart = (PieChart) rootView.findViewById(R.id.pie_chart);
+        pieChart.setUsePercentValues(true);
+
+        List<PieEntry> entries = new ArrayList<PieEntry>();
+
+        entries.add(new PieEntry(1, (float) 12.5));
+        entries.add(new PieEntry(2, (float) 17.5));
+        entries.add(new PieEntry(3, (float) 10));
+
+        PieDataSet dataSet = new PieDataSet(entries, "Label");
+
+        PieData pieData = new PieData(dataSet);
+        pieChart.setData(pieData);
+        pieChart.invalidate(); // refresh
+
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cost, container, false);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
