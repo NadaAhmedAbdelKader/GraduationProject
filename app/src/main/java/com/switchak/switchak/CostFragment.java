@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +32,6 @@ public class CostFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,8 +63,8 @@ public class CostFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            String mParam1 = getArguments().getString(ARG_PARAM1);
+            String mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -74,10 +72,17 @@ public class CostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_cost, container, false);
-        PieChart pieChart = (PieChart) rootView.findViewById(R.id.pie_chart);
+
+        RecyclerView mRoomsList = rootView.findViewById(R.id.rv_rooms);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        mRoomsList.setLayoutManager(layoutManager);
+        RoomsAdapter mAdapter = new RoomsAdapter();
+        mRoomsList.setAdapter(mAdapter);
+
+        PieChart pieChart = rootView.findViewById(R.id.pie_chart);
         pieChart.setUsePercentValues(true);
 
-        List<PieEntry> entries = new ArrayList<PieEntry>();
+        List<PieEntry> entries = new ArrayList<>();
 
         entries.add(new PieEntry(1, (float) 12.5));
         entries.add(new PieEntry(2, (float) 17.5));

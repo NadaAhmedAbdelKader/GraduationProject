@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TimeUtils;
 import android.view.LayoutInflater;
@@ -45,16 +47,6 @@ public class HistoryFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
-    private String userId;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private LineChart chart;
-
     private OnFragmentInteractionListener mListener;
 
     public HistoryFragment() {
@@ -83,8 +75,8 @@ public class HistoryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            String mParam1 = getArguments().getString(ARG_PARAM1);
+            String mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -93,12 +85,18 @@ public class HistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
-        chart = (LineChart) rootView.findViewById(R.id.chart);
 
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
+        RecyclerView mRoomsList = rootView.findViewById(R.id.rv_rooms);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        mRoomsList.setLayoutManager(layoutManager);
+        RoomsAdapter mAdapter = new RoomsAdapter();
+        mRoomsList.setAdapter(mAdapter);
+        LineChart chart = rootView.findViewById(R.id.chart);
 
-        userId = currentUser.getUid();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        String userId = currentUser.getUid();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference().child("users").child(userId);
         ChildEventListener readingsEventListener = new ChildEventListener() {
@@ -146,7 +144,7 @@ public class HistoryFragment extends Fragment {
             }
         });
 
-        List<Entry> entries = new ArrayList<Entry>();
+        List<Entry> entries = new ArrayList<>();
 
         entries.add(new Entry(1, (float) 12.5));
         entries.add(new Entry(2, (float) 17.5));
