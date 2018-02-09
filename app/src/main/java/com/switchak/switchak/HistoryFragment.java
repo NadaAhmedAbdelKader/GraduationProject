@@ -86,7 +86,7 @@ public class HistoryFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
 
-        RecyclerView mRoomsList = rootView.findViewById(R.id.rv_rooms);
+        RecyclerView mRoomsList = rootView.findViewById(R.id.rv_history_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
         RoomsAdapter mAdapter = new RoomsAdapter();

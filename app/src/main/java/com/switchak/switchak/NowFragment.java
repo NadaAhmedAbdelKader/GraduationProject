@@ -66,7 +66,7 @@ public class NowFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_now, container, false);
 
-        RecyclerView mRoomsList = rootView.findViewById(R.id.rv_rooms);
+        RecyclerView mRoomsList = rootView.findViewById(R.id.rv_now_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
         RoomsAdapter mAdapter = new RoomsAdapter();

@@ -73,7 +73,7 @@ public class CostFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_cost, container, false);
 
-        RecyclerView mRoomsList = rootView.findViewById(R.id.rv_rooms);
+        RecyclerView mRoomsList = rootView.findViewById(R.id.rv_cost_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
         RoomsAdapter mAdapter = new RoomsAdapter();

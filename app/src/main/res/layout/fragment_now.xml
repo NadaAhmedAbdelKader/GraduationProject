@@ -15,7 +15,7 @@
         />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_rooms"
+        android:id="@+id/rv_now_rooms"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/view_room" />
