@@ -7,11 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -89,7 +87,7 @@ public class HistoryFragment extends Fragment {
         RecyclerView mRoomsList = rootView.findViewById(R.id.rv_history_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
-        RoomsAdapter mAdapter = new RoomsAdapter();
+        RoomsAdapter mAdapter = new RoomsAdapter("history");
         mRoomsList.setAdapter(mAdapter);
         LineChart chart = rootView.findViewById(R.id.chart);
 

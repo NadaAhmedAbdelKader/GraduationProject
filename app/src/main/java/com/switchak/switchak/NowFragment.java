@@ -69,7 +69,7 @@ public class NowFragment extends Fragment {
         RecyclerView mRoomsList = rootView.findViewById(R.id.rv_now_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
-        RoomsAdapter mAdapter = new RoomsAdapter();
+        RoomsAdapter mAdapter = new RoomsAdapter("now");
         mRoomsList.setAdapter(mAdapter);
 
 

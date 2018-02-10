@@ -2,10 +2,10 @@ package com.switchak.switchak;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,13 +14,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Muham on 08/02/2018.
@@ -33,12 +29,15 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
     private final List<Room> rooms = new ArrayList<>();
     private int numberOfRooms;
+    private String fragment;
 
 
-    RoomsAdapter() {
+    RoomsAdapter(String fragment) {
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
+
+        this.fragment = fragment;
 
         ChildEventListener roomsListener = new ChildEventListener() {
             @Override
@@ -107,6 +106,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                     if (rooms.get(i).getRoomId().equals(sensor)) {
                         rooms.get(i).getReadings().add((dataSnapshot.child("reading").getValue(Float.class)));
                         rooms.get(i).getTimes().add((dataSnapshot.child("time_stamp").getValue(Long.class)));
+                        notifyItemChanged(i);
                     }
                 }
             }
@@ -140,11 +140,15 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
     @Override
     public RoomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        int layoutIdForListItem = R.layout.view_room;
+        int layoutIdForListItem;
+        if (fragment.equals("now"))
+            layoutIdForListItem = R.layout.view_now_room;
+        else
+            layoutIdForListItem = R.layout.view_history_room;
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(layoutIdForListItem, parent, false);
-        return new RoomViewHolder(view);
+        return new RoomViewHolder(view, fragment);
     }
 
     @Override
@@ -159,13 +163,16 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
 
     class RoomViewHolder extends RecyclerView.ViewHolder {
-        final TextView roomName;
-        final TextView roomReading;
+        TextView roomName;
+        TextView roomReading;
+        Switch roomPower;
 
-        RoomViewHolder(View itemView) {
+        RoomViewHolder(View itemView, String fragment) {
             super(itemView);
+
             roomName = itemView.findViewById(R.id.tv_room_name);
             roomReading = itemView.findViewById(R.id.tv_room_reading);
+            roomPower = itemView.findViewById(R.id.switch_room_power);
         }
 
         void bind(Room room) {
