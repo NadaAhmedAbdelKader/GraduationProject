@@ -10,13 +10,14 @@
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="349dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_cost_rooms"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/view_history_room" />
+        tools:listitem="@layout/view_history_room"
+        android:scrollbars="vertical"/>
 
 
 </LinearLayout>

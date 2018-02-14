@@ -2,9 +2,11 @@ package com.switchak.switchak;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -39,6 +41,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
         this.fragment = fragment;
 
+
         ChildEventListener roomsListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -49,6 +52,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                     room.setPower(dataSnapshot.child("power").getValue(Boolean.class));
                 rooms.add(room);
                 notifyItemInserted(rooms.size() - 1);
+                Log.e("room item inserted", String.valueOf(room.isPower()));
             }
 
             @Override
@@ -67,6 +71,8 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                     if (dataSnapshot.hasChild("power"))
                         room.setPower(dataSnapshot.child("power").getValue(Boolean.class));
                     notifyItemChanged(index);
+                    Log.e("room item changed", String.valueOf(room.isPower()));
+
                 }
             }
 
@@ -107,6 +113,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                         rooms.get(i).getReadings().add((dataSnapshot.child("reading").getValue(Float.class)));
                         rooms.get(i).getTimes().add((dataSnapshot.child("time_stamp").getValue(Long.class)));
                         notifyItemChanged(i);
+                        Log.e("new reading", String.valueOf(true));
                     }
                 }
             }
@@ -175,16 +182,28 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             roomPower = itemView.findViewById(R.id.switch_room_power);
         }
 
-        void bind(Room room) {
+        void bind(final Room room) {
             if (room.getRoomName() != null)
                 roomName.setText(room.getRoomName());
             else
                 roomName.setText(room.getRoomId());
 
+            if (fragment.equals("now")) {
+                roomPower.setChecked(room.isPower());
+                Log.e("toggle", String.valueOf(room.isPower()));
+                roomPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child("rooms").child(room.getRoomId()).child("power").setValue(b);
+                    }
+                });
+            }
+
             try {
                 roomReading.setText(String.valueOf(room.getReadings().get(room.getReadings().size() - 1)));
             } catch (Exception e) {
-                roomReading.setText("N/A");
+                roomReading.setText("");
             }
         }
     }

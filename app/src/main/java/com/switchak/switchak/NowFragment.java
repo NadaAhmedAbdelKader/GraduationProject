@@ -9,6 +9,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.TextView;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 /**
@@ -24,6 +34,7 @@ public class NowFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public double totalReading;
 
 
     private OnFragmentInteractionListener mListener;
@@ -66,11 +77,87 @@ public class NowFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_now, container, false);
 
+
+        totalReading = 0f;
         RecyclerView mRoomsList = rootView.findViewById(R.id.rv_now_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
         RoomsAdapter mAdapter = new RoomsAdapter("now");
         mRoomsList.setAdapter(mAdapter);
+
+
+        //prototype
+        final TextView latestReadingTextView = (TextView) rootView.findViewById(R.id.tv_latest_reading);
+        final TextView totalReadingTextView = (TextView) rootView.findViewById(R.id.tv_total_reading);
+        final Switch powerToggleButton = (Switch) rootView.findViewById(R.id.tb_power);
+
+
+        FirebaseDatabase.getInstance().getReference().child("logs").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                double latestReading = dataSnapshot.getValue(Float.class);
+                latestReading = latestReading / 3600;
+                latestReading = Math.floor(latestReading * 100) / 100;
+                if (latestReading == 0.39)
+                    latestReading = 0.01;
+                latestReadingTextView.setText(String.valueOf(latestReading));
+                totalReading = totalReading + latestReading;
+                totalReading = Math.floor(totalReading * 1000) / 1000;
+                totalReadingTextView.setText(String.valueOf(totalReading));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        // Read from the database
+        FirebaseDatabase.getInstance().getReference().child("power").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                int value = dataSnapshot.getValue(Integer.class);
+                powerToggleButton.setChecked(value > 0);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+            }
+        });
+
+
+        powerToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("power");
+                if (b) {
+                    myRef.setValue(1);
+                } else {
+                    myRef.setValue(0);
+                }
+            }
+
+        });
 
 
         // Inflate the layout for this fragment
