@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by Muham on 08/02/2018.
@@ -45,23 +46,32 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         ChildEventListener roomsListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Room room = new Room(dataSnapshot.getKey());
-                if (dataSnapshot.hasChild("room_name"))
-                    room.setRoomName(dataSnapshot.child("room_name").getValue(String.class));
-                if (dataSnapshot.hasChild("power"))
-                    room.setPower(dataSnapshot.child("power").getValue(Boolean.class));
-                rooms.add(room);
-                notifyItemInserted(rooms.size() - 1);
-                Log.e("room item inserted", String.valueOf(room.isPower()));
+                if (dataSnapshot.getKey() != null) {
+                    Room room = new Room(dataSnapshot.getKey());
+                    if (dataSnapshot.hasChild("room_name"))
+                        room.setRoomName(dataSnapshot.child("room_name").getValue(String.class));
+                    if (dataSnapshot.hasChild("power"))
+                        room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
+                    rooms.add(room);
+                    notifyItemInserted(rooms.size() - 1);
+                    Log.e("room item inserted", String.valueOf(room.isPower()) + dataSnapshot.getKey());
+                }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 int index = -1;
-                for (int i = 0; i < rooms.size(); i++) {
-                    if (rooms.get(i).getRoomId().equals(dataSnapshot.getKey()))
-                        index = i;
+
+                if (dataSnapshot.getKey() != null) {
+                    StringTokenizer stringTokenizer = new StringTokenizer(dataSnapshot.getKey(), "_", false);
+                    stringTokenizer.nextToken();
+                    index = Integer.parseInt(stringTokenizer.nextToken());
+                    index--;
                 }
+//                for (int i = 0; i < rooms.size(); i++) {
+//                    if (rooms.get(i).getRoomId().equals(s))
+//                        index = i;
+//                }
 
                 if (index > -1) {
                     Room room = rooms.get(index);
@@ -69,9 +79,9 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                     if (dataSnapshot.hasChild("room_name"))
                         room.setRoomName(dataSnapshot.child("room_name").getValue(String.class));
                     if (dataSnapshot.hasChild("power"))
-                        room.setPower(dataSnapshot.child("power").getValue(Boolean.class));
+                        room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
                     notifyItemChanged(index);
-                    Log.e("room item changed", String.valueOf(room.isPower()));
+                    Log.e("room item changed", String.valueOf(room.isPower()) + dataSnapshot.getKey());
 
                 }
             }
@@ -79,10 +89,14 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 int index = -1;
-                for (int i = 0; i < rooms.size(); i++) {
-                    if (rooms.get(i).getRoomId().equals(dataSnapshot.getKey()))
-                        index = i;
+
+                if (dataSnapshot.getKey() != null) {
+                    StringTokenizer stringTokenizer = new StringTokenizer(dataSnapshot.getKey(), "_", false);
+                    stringTokenizer.nextToken();
+                    index = Integer.parseInt(stringTokenizer.nextToken());
+                    index--;
                 }
+
                 if (index > -1) {
                     rooms.remove(index);
                     notifyItemRemoved(index);
@@ -103,45 +117,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").addChildEventListener(roomsListener);
         myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").keepSynced(true);
 
-
-        ChildEventListener readingsListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String sensor = dataSnapshot.child("sensor").getValue(String.class);
-                for (int i = 0; i < rooms.size(); i++) {
-                    if (rooms.get(i).getRoomId().equals(sensor)) {
-                        rooms.get(i).getReadings().add((dataSnapshot.child("reading").getValue(Float.class)));
-                        rooms.get(i).getTimes().add((dataSnapshot.child("time_stamp").getValue(Long.class)));
-                        notifyItemChanged(i);
-                        Log.e("new reading", String.valueOf(true));
-                    }
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-
-        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("readings").addChildEventListener(readingsListener);
-        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("readings").keepSynced(true);
-    }
+}
 
 
     @Override
@@ -191,11 +167,11 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             if (fragment.equals("now")) {
                 roomPower.setChecked(room.isPower());
                 Log.e("toggle", String.valueOf(room.isPower()));
-                roomPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                roomPower.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .child("rooms").child(room.getRoomId()).child("power").setValue(b);
+                    public void onClick(View view) {
+                        FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getUid())
+                                .child("rooms").child(room.getRoomId()).child("power").setValue(roomPower.isChecked() ? 1 : 0);
                     }
                 });
             }

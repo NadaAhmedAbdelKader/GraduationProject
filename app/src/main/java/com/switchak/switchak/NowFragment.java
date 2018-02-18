@@ -12,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -92,10 +95,12 @@ public class NowFragment extends Fragment {
         final Switch powerToggleButton = (Switch) rootView.findViewById(R.id.tb_power);
 
 
-        FirebaseDatabase.getInstance().getReference().child("logs").addChildEventListener(new ChildEventListener() {
+        FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getUid())
+                .child("readings").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                double latestReading = dataSnapshot.getValue(Float.class);
+                Object value = dataSnapshot.getValue();
+                double latestReading = Double.parseDouble(value.toString());
                 latestReading = latestReading / 3600;
                 latestReading = Math.floor(latestReading * 100) / 100;
                 if (latestReading == 0.39)
@@ -128,7 +133,8 @@ public class NowFragment extends Fragment {
         });
 
         // Read from the database
-        FirebaseDatabase.getInstance().getReference().child("power").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getUid()).child("rooms")
+                .child("room_1").child("power").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -143,21 +149,35 @@ public class NowFragment extends Fragment {
             }
         });
 
-
-        powerToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
+        powerToggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public void onClick(View view) {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("power");
-                if (b) {
+                DatabaseReference myRef = database.getReference(FirebaseAuth.getInstance().getUid())
+                        .child("rooms").child("room_1")
+                        .child("power");
+                if (powerToggleButton.isChecked()) {
                     myRef.setValue(1);
                 } else {
                     myRef.setValue(0);
                 }
             }
-
         });
+
+//        powerToggleButton.setOnCheckedChangeListener(new ToggleButton.OnCheckedChangeListener() {
+//
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                FirebaseDatabase database = FirebaseDatabase.getInstance();
+//                DatabaseReference myRef = database.getReference("power");
+//                if (b) {
+//                    myRef.setValue(1);
+//                } else {
+//                    myRef.setValue(0);
+//                }
+//            }
+//
+//        });
 
 
         // Inflate the layout for this fragment
