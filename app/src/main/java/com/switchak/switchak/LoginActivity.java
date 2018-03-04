@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String LOG_TAG = "LoginActivity";
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
