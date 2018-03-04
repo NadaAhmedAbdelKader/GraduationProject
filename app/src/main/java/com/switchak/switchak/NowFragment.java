@@ -23,6 +23,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Timestamp;
+import java.util.StringTokenizer;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -85,7 +88,7 @@ public class NowFragment extends Fragment {
         RecyclerView mRoomsList = rootView.findViewById(R.id.rv_now_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
-        RoomsAdapter mAdapter = new RoomsAdapter("now");
+        final RoomsAdapter mAdapter = new RoomsAdapter("now");
         mRoomsList.setAdapter(mAdapter);
 
 
@@ -100,17 +103,34 @@ public class NowFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Object value = dataSnapshot.getValue();
-                double latestReading = Double.parseDouble(value.toString());
-//                latestReading = latestReading / 3600;
-                latestReading = Math.floor(latestReading * 100) / 100;
-                if (latestReading == 0.39)
-                    latestReading = 0.01;
-                latestReadingTextView.setText(String.valueOf(latestReading));
-                latestReading = latestReading / 3600; //
-                latestReading = Math.floor(latestReading * 100) / 100; //
-                totalReading = totalReading + latestReading;
-                totalReading = Math.floor(totalReading * 1000) / 1000;
-                totalReadingTextView.setText(String.valueOf(totalReading));
+                String values = value.toString();
+
+                StringTokenizer stringTokenizer = new StringTokenizer(values, ",", false);
+
+                double totalLatestReading =0;
+
+                for (int i = 0 ; i < mAdapter.getRooms().size(); i++) {
+                    if (i==0){ totalLatestReading = 0;}
+                    double reading = Double.parseDouble(stringTokenizer.nextToken().toString());
+                    reading = Math.floor(reading * 100) / 100;
+                    mAdapter.getRooms().get(i).getReadings().add(reading);
+                    mAdapter.getRooms().get(i).addReadings(reading);
+                    totalLatestReading = totalLatestReading + reading ;
+                 }
+
+                latestReadingTextView.setText( "" + totalLatestReading);
+                totalReading = totalReading + totalLatestReading ;
+                totalReadingTextView.setText("" + totalReading);
+
+                for (int i = 0; i < mAdapter.getRooms().size(); i++)
+                {
+                    String time = dataSnapshot.getKey();
+                    Timestamp timestamp = new Timestamp(Long.parseLong(time));
+                    mAdapter.getRooms().get(i).getTimestampList().add(timestamp);
+                }
+
+
+
             }
 
             @Override

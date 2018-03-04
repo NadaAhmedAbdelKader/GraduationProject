@@ -30,6 +30,10 @@ import java.util.StringTokenizer;
 public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHolder> {
 
 
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
     private final List<Room> rooms = new ArrayList<>();
     private int numberOfRooms;
     private String fragment;

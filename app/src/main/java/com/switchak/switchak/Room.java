@@ -16,22 +16,38 @@ class Room {
     private String roomName;
     private boolean power;
     private List<Long> times = new ArrayList<>();
-    private List<Float> readings = new ArrayList<>();
+    private List<Double> readings = new ArrayList<>();
     private List<Timestamp> timestampList = new ArrayList<>();
+
+
+    //Total Readings for each room
+    Double totalReadings ;
+
+    public void addReadings ( Double Reading)
+    {
+        totalReadings = totalReadings + Reading;
+    }
+
 
 
     //Constructor that takes room name
     Room(String roomId) {
         this.roomId = roomId;
+        totalReadings = 0.0;
     }
 
     public Room(String roomId, String roomName, boolean power) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.power = power;
+
     }
 
     //Getters and setters
+    public Double getTotalReadings() {
+        return totalReadings;
+    }
+
     public String getRoomId() {
         return roomId;
     }
@@ -64,11 +80,11 @@ class Room {
         this.times = times;
     }
 
-    public List<Float> getReadings() {
+    public List<Double> getReadings() {
         return readings;
     }
 
-    public void setReadings(List<Float> readings) {
+    public void setReadings(List<Double> readings) {
         this.readings = readings;
     }
 
