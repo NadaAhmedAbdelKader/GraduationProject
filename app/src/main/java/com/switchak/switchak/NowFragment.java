@@ -107,16 +107,18 @@ public class NowFragment extends Fragment {
 
                 StringTokenizer stringTokenizer = new StringTokenizer(values, ",", false);
 
-                double totalLatestReading =0;
+                double totalLatestReading =0.0;
 
                 for (int i = 0 ; i < mAdapter.getRooms().size(); i++) {
-                    if (i==0){ totalLatestReading = 0;}
+                    if (i==0){ totalLatestReading = 0.0;}
                     double reading = Double.parseDouble(stringTokenizer.nextToken().toString());
                     reading = Math.floor(reading * 100) / 100;
                     mAdapter.getRooms().get(i).getReadings().add(reading);
                     mAdapter.getRooms().get(i).addReadings(reading);
                     totalLatestReading = totalLatestReading + reading ;
-                 }
+                    totalLatestReading = Math.floor(totalLatestReading * 100) / 100;
+
+                }
 
                 latestReadingTextView.setText( "" + totalLatestReading);
                 totalReading = totalReading + totalLatestReading ;
