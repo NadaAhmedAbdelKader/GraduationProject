@@ -101,11 +101,13 @@ public class NowFragment extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Object value = dataSnapshot.getValue();
                 double latestReading = Double.parseDouble(value.toString());
-                latestReading = latestReading / 3600;
+//                latestReading = latestReading / 3600;
                 latestReading = Math.floor(latestReading * 100) / 100;
                 if (latestReading == 0.39)
                     latestReading = 0.01;
                 latestReadingTextView.setText(String.valueOf(latestReading));
+                latestReading = latestReading / 3600; //
+                latestReading = Math.floor(latestReading * 100) / 100; //
                 totalReading = totalReading + latestReading;
                 totalReading = Math.floor(totalReading * 1000) / 1000;
                 totalReadingTextView.setText(String.valueOf(totalReading));
