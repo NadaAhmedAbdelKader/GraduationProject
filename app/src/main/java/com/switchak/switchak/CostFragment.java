@@ -87,15 +87,23 @@ public class CostFragment extends Fragment {
         RoomsAdapter mAdapter = new RoomsAdapter("history");
         mRoomsList.setAdapter(mAdapter);
 
+        //jannat
+
+        int roomnum= mAdapter.getRooms().size();
+
         PieChart pieChart = rootView.findViewById(R.id.pie_chart);
         pieChart.setUsePercentValues(true);
 
         List<PieEntry> entries = new ArrayList<>();
 
-        entries.add(new PieEntry(1, (float) 12.5));
+       /* entries.add(new PieEntry(1, (float) 12.5));
         entries.add(new PieEntry(2, (float) 17.5));
         entries.add(new PieEntry(3, (float) 10));
-        entries.add(new PieEntry(4, (float) 20));
+        entries.add(new PieEntry(4, (float) 20)); */
+
+       for (int i=0 ; i<roomnum ; i++){
+           entries.add(new PieEntry((int)i , (double)mAdapter.getRooms().get(i).getTotalreadings()));
+       }
 
 
         PieDataSet dataSet = new PieDataSet(entries, "Label");
