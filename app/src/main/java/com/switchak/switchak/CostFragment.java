@@ -84,7 +84,7 @@ public class CostFragment extends Fragment {
         RecyclerView mRoomsList = rootView.findViewById(R.id.rv_cost_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
-        RoomsAdapter mAdapter = new RoomsAdapter("history");
+        final RoomsAdapter mAdapter = RoomsAdapter.getInstance("history");
         mRoomsList.setAdapter(mAdapter);
 
         //jannat

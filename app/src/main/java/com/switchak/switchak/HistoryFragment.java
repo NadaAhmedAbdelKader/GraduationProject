@@ -102,7 +102,7 @@ public class HistoryFragment extends Fragment {
         RecyclerView mRoomsList = rootView.findViewById(R.id.rv_history_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
-        RoomsAdapter mAdapter = new RoomsAdapter("history");
+        final RoomsAdapter mAdapter = RoomsAdapter.getInstance("history");
         mRoomsList.setAdapter(mAdapter);
         LineChart chart = rootView.findViewById(R.id.chart);
 

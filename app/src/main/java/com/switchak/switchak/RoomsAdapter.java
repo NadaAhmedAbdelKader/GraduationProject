@@ -37,9 +37,19 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
     private final List<Room> rooms = new ArrayList<>();
     private int numberOfRooms;
     private String fragment;
+    private static RoomsAdapter INSTANCE = null ;
+
+    //Singleton pattern
+
+    public static RoomsAdapter getInstance(String fragment) {
+        if (INSTANCE == null) {
+            INSTANCE = new RoomsAdapter(fragment);
+        }
+        return(INSTANCE);
+    }
 
 
-    RoomsAdapter(String fragment) {
+   private RoomsAdapter(String fragment) {
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
