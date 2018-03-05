@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import android.support.v7.app.ActionBar;
+
 public class MainActivity extends AppCompatActivity
         implements HistoryFragment.OnFragmentInteractionListener,
         NowFragment.OnFragmentInteractionListener,
@@ -56,6 +58,11 @@ public class MainActivity extends AppCompatActivity
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setIcon(R.mipmap.ic_launcher);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

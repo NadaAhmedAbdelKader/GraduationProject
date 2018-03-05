@@ -18,6 +18,14 @@ class Room {
     private List<Long> times = new ArrayList<>();
     private List<Double> readings = new ArrayList<>();
     private List<Timestamp> timestampList = new ArrayList<>();
+    private double totalreadings;
+
+
+    public double getTotalreadings() {
+        return totalreadings;
+    }
+
+
 
 
     //Total Readings for each room
