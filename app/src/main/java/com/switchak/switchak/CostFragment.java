@@ -42,7 +42,7 @@ public class CostFragment extends Fragment {
 
         //jannat
 
-        int roomnum= mAdapter.getRooms().size();
+        int roomnum= FirebaseUtils.getInstance().getRooms().size();
 
         PieChart pieChart = rootView.findViewById(R.id.pie_chart);
         pieChart.setUsePercentValues(true);
@@ -55,7 +55,7 @@ public class CostFragment extends Fragment {
         entries.add(new PieEntry(4, (float) 20)); */
 
        for (int i=0 ; i<roomnum ; i++){
-           entries.add(new PieEntry(new Float(mAdapter.getRooms().get(i).getTotalReadings())));
+           entries.add(new PieEntry(new Float(FirebaseUtils.getInstance().getRooms().get(i).getTotalReadings())));
        }
 
 

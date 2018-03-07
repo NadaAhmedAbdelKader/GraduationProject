@@ -30,89 +30,11 @@ import java.util.StringTokenizer;
 public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHolder> {
 
 
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
-    private List<Room> rooms = new ArrayList<>();
-    private int numberOfRooms;
+    private List<Room> rooms = FirebaseUtils.getInstance().getRooms();
     private String fragment;
 
     RoomsAdapter(String fragment) {
-
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
-
         this.fragment = fragment;
-
-        ChildEventListener roomsListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getKey() != null) {
-                    Room room = new Room(dataSnapshot.getKey());
-                    if (dataSnapshot.hasChild("room_name"))
-                        room.setRoomName(dataSnapshot.child("room_name").getValue(String.class));
-                    if (dataSnapshot.hasChild("power"))
-                        room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
-                    rooms.add(room);
-                    notifyItemInserted(rooms.size() - 1);
-                    Log.e("room item inserted", String.valueOf(room.isPower()) + dataSnapshot.getKey());
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                int index = -1;
-
-                if (dataSnapshot.getKey() != null) {
-                    StringTokenizer stringTokenizer = new StringTokenizer(dataSnapshot.getKey(), "_", false);
-                    stringTokenizer.nextToken();
-                    index = Integer.parseInt(stringTokenizer.nextToken());
-                    index--;
-                }
-                if (index > -1) {
-                    Room room = rooms.get(index);
-                    room.setRoomId(dataSnapshot.getKey());
-                    if (dataSnapshot.hasChild("room_name"))
-                        room.setRoomName(dataSnapshot.child("room_name").getValue(String.class));
-                    if (dataSnapshot.hasChild("power"))
-                        room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
-                    notifyItemChanged(index);
-                    Log.e("room item changed", String.valueOf(room.isPower()) + dataSnapshot.getKey());
-                }
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                int index = -1;
-
-                if (dataSnapshot.getKey() != null) {
-                    StringTokenizer stringTokenizer = new StringTokenizer(dataSnapshot.getKey(), "_", false);
-                    stringTokenizer.nextToken();
-                    index = Integer.parseInt(stringTokenizer.nextToken());
-                    index--;
-                }
-
-                if (index > -1) {
-                    rooms.remove(index);
-                    notifyItemRemoved(index);
-                }
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-
-        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").addChildEventListener(roomsListener);
-        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").keepSynced(true);
-
     }
 
 
