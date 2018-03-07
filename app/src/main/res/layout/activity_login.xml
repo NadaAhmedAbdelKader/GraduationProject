@@ -2,15 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bk"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.switchak.switchak.LoginActivity"
-    android:background="@drawable/bk"
-    >
+    tools:context="com.switchak.switchak.LoginActivity">
 
     <!-- Login progress -->
     <ProgressBar
@@ -35,27 +34,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:src="@drawable/logo"
-                />
+                android:contentDescription="Logo"
+                android:src="@drawable/logo" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                >
+                android:layout_marginTop="50dp">
 
                 <EditText
                     android:id="@+id/email"
                     android:layout_width="300dp"
                     android:layout_height="60dp"
-                  android:hint="  Serial Number"
+                    android:layout_marginLeft="2dp"
                     android:drawableLeft="@drawable/ic_cloud_queue_black_24dp"
                     android:ems="10"
+                    android:hint="  Serial Number"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColorHint="#fff"
-                    android:layout_marginLeft="2dp"/>
+                    android:textColorHint="#fff" />
 
 
             </android.support.design.widget.TextInputLayout>
@@ -66,19 +64,18 @@
 
 
                 <EditText
+                    android:id="@+id/password"
                     android:layout_width="300dp"
                     android:layout_height="60dp"
-                    android:inputType="textEmailAddress"
-                    android:hint="  Password"
-                    android:id="@+id/password"
-                    android:ems="10"
-                    android:padding="8dp"
-                    android:textColorHint="#fff"
-                    android:maxLines="1"
+                    android:layout_marginLeft="0dp"
                     android:layout_marginTop="4dp"
                     android:drawableLeft="@drawable/ic_lock_open_black_24dp"
-                    android:layout_marginLeft="0dp"
-                    />
+                    android:ems="10"
+                    android:hint="  Password"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:textColorHint="#fff" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -88,20 +85,20 @@
                 android:layout_marginTop="18dp"
                 android:text="Remember me"
 
-                android:textColor="@color/common_google_signin_btn_text_light_focused"
-                 />
+                android:textColor="@color/common_google_signin_btn_text_light_focused" />
 
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
-                android:layout_gravity="center"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginTop="20dp"
-                android:text="@string/action_sign_in"
-                android:textStyle="bold"
                 android:background="@drawable/buttonclicked"
-                android:clickable="true"/>
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/action_sign_in"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

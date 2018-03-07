@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.switchak.switchak.CostFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.switchak.switchak.CostFragment">
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart"
@@ -14,8 +14,8 @@
         android:id="@+id/rv_cost_rooms"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/view_history_room"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        tools:listitem="@layout/view_history_room" />
 
 
 </LinearLayout>

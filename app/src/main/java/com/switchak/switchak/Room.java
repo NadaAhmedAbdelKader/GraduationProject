@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Muham on 06/02/2018.
+ * Created by Osama on 06/02/2018.
+ * Represents a room the gets retrieved from the backend,
+ * and gets populated with data that corresponds to that room
  */
 
 class Room {
 
 
+    //Total Readings for each room
+    private float totalReadings;
     //Variables
     private String roomId;
     private String roomName;
@@ -18,44 +22,27 @@ class Room {
     private List<Float> readings = new ArrayList<>();
     private List<Timestamp> timestampList = new ArrayList<>();
 
-
-
-
-
-
-    //Total Readings for each room
-    float totalReadings ;
-
-    public void addReadings ( Float Reading)
-    {
-        totalReadings = totalReadings + Reading;
-    }
-
-
-
     //Constructor that takes room name
     Room(String roomId) {
         this.roomId = roomId;
         totalReadings = 0;
     }
 
-    public Room(String roomId, String roomName, boolean power) {
-        this.roomId = roomId;
-        this.roomName = roomName;
-        this.power = power;
 
+    void addReadings(Float Reading) {
+        totalReadings = totalReadings + Reading;
     }
 
     //Getters and setters
-    public float getTotalReadings() {
+    float getTotalReadings() {
         return totalReadings;
     }
 
-    public String getRoomId() {
+    String getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(String roomId) {
+    void setRoomId(String roomId) {
         this.roomId = roomId;
     }
 
@@ -63,33 +50,24 @@ class Room {
         return roomName;
     }
 
-    public void setRoomName(String roomName) {
+    void setRoomName(String roomName) {
         this.roomName = roomName;
     }
 
-    public List<Timestamp> getTimestampList() {
+    List<Timestamp> getTimestampList() {
         return timestampList;
     }
 
-    public void setTimestampList(List<Timestamp> timestampList) {
-        this.timestampList = timestampList;
-    }
 
-
-
-    public List<Float> getReadings() {
+    List<Float> getReadings() {
         return readings;
     }
 
-    public void setReadings(List<Float> readings) {
-        this.readings = readings;
-    }
-
-    public boolean isPower() {
+    boolean isPower() {
         return power;
     }
 
-    public void setPower(boolean power) {
+    void setPower(boolean power) {
         this.power = power;
     }
 }

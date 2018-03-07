@@ -16,19 +16,17 @@ import java.util.Observable;
 import java.util.StringTokenizer;
 
 /**
- * Created by Muham on 07/03/2018.
+ * Created by Osama on 07/03/2018.
+ * Singleton for retrieving data from firebase,
+ * avoiding multiple instances to avoid multiple listeners overhead
  */
 
-public class FirebaseUtils extends Observable {
+class FirebaseUtils extends Observable {
     private static final FirebaseUtils ourInstance = new FirebaseUtils();
     private float totalLatestReading;
     private float totalReading;
     private List<Room> rooms;
 
-
-    public static FirebaseUtils getInstance() {
-        return ourInstance;
-    }
 
     private FirebaseUtils() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -47,7 +45,7 @@ public class FirebaseUtils extends Observable {
                     if (dataSnapshot.hasChild("power"))
                         room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
                     rooms.add(room);
-                    //TODO: notify rooms adapters that a room is added and implement the update
+                    // TODO: 07/03/2018 notify rooms adapters that a room is added and implement the update
                     //notifyItemInserted(rooms.size() - 1);
                     Log.e("room item inserted", String.valueOf(room.isPower()) + dataSnapshot.getKey());
                 }
@@ -70,7 +68,7 @@ public class FirebaseUtils extends Observable {
                         room.setRoomName(dataSnapshot.child("room_name").getValue(String.class));
                     if (dataSnapshot.hasChild("power"))
                         room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
-                    //TODO: notify rooms adapters that a room is changed and implement the update
+                    // TODO: 07/03/2018 notify rooms adapters that a room is changed and implement the update
                     //notifyItemChanged(index);
                     Log.e("room item changed", String.valueOf(room.isPower()) + dataSnapshot.getKey());
                 }
@@ -89,7 +87,7 @@ public class FirebaseUtils extends Observable {
 
                 if (index > -1) {
                     rooms.remove(index);
-                    //TODO: notify rooms adapters that a room is removed and implement the update
+                    // TODO: 07/03/2018 notify rooms adapters that a room is removed and implement the update
                     //notifyItemRemoved(index);
                 }
             }
@@ -114,7 +112,7 @@ public class FirebaseUtils extends Observable {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         Object value = dataSnapshot.getValue();
-                        String values = value.toString();
+                        String values = value != null ? value.toString() : null;
 
                         StringTokenizer stringTokenizer = new StringTokenizer(values, ",", false);
 
@@ -123,7 +121,7 @@ public class FirebaseUtils extends Observable {
                         for (int i = 0; i < rooms.size(); i++) {
                             if (i == 0) totalLatestReading = 0;
                             if (stringTokenizer.hasMoreTokens()) {
-                                float reading = Float.parseFloat(stringTokenizer.nextToken().toString());
+                                float reading = Float.parseFloat(stringTokenizer.nextToken());
                                 reading = (float) Math.floor(reading * 100) / 100;
                                 rooms.get(i).getReadings().add(reading);
                                 rooms.get(i).addReadings(reading);
@@ -131,9 +129,9 @@ public class FirebaseUtils extends Observable {
                                 totalLatestReading = (float) Math.floor(totalLatestReading * 100) / 100;
                             }
                         }
-                        totalReading += totalLatestReading / 3600;
+                        totalReading += (totalLatestReading / 3600);
 
-                        //TODO: refer to these 2 lines for notifying
+                        // TODO: 07/03/2018 refer to these 2 lines for notifying
                         setChanged();
                         notifyObservers();
 
@@ -172,15 +170,19 @@ public class FirebaseUtils extends Observable {
 
     }
 
+    static FirebaseUtils getInstance() {
+        return ourInstance;
+    }
 
-
-    public float getTotalLatestReading() {
+    float getTotalLatestReading() {
         return totalLatestReading;
     }
-    public float getTotalReading() {
+
+    float getTotalReading() {
         return totalReading;
     }
-    public List<Room> getRooms() {
+
+    List<Room> getRooms() {
         return rooms;
     }
 

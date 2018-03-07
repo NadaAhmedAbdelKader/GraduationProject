@@ -1,19 +1,11 @@
 package com.switchak.switchak;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,7 +13,6 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +31,9 @@ public class CostFragment extends Fragment {
         final RoomsAdapter mAdapter = new RoomsAdapter("history");
         mRoomsList.setAdapter(mAdapter);
 
-        //jannat
+        //Jannat
 
-        int roomnum= FirebaseUtils.getInstance().getRooms().size();
+        int roomnum = FirebaseUtils.getInstance().getRooms().size();
 
         PieChart pieChart = rootView.findViewById(R.id.pie_chart);
         pieChart.setUsePercentValues(true);
@@ -54,17 +45,17 @@ public class CostFragment extends Fragment {
         entries.add(new PieEntry(3, (float) 10));
         entries.add(new PieEntry(4, (float) 20)); */
 
-       for (int i=0 ; i<roomnum ; i++){
-           entries.add(new PieEntry(new Float(FirebaseUtils.getInstance().getRooms().get(i).getTotalReadings())));
-       }
+        for (int i = 0; i < roomnum; i++) {
+            entries.add(new PieEntry(FirebaseUtils.getInstance().getRooms().get(i).getTotalReadings()));
+        }
 
 
         PieDataSet dataSet = new PieDataSet(entries, "Label");
 
-        final int[] MY_COLORS = {Color.rgb(192,192,0), Color.rgb(255,0,0), Color.rgb(0,0,192),Color.rgb(0,200,0) };
-        ArrayList<Integer> colors = new ArrayList<Integer>();
+        final int[] MY_COLORS = {Color.rgb(192, 192, 0), Color.rgb(255, 0, 0), Color.rgb(0, 0, 192), Color.rgb(0, 200, 0)};
+        ArrayList<Integer> colors = new ArrayList<>();
 
-        for(int c: MY_COLORS) colors.add(c);
+        for (int c : MY_COLORS) colors.add(c);
 
         dataSet.setColors(colors);
         dataSet.setValueTextSize(15f);
@@ -88,8 +79,6 @@ public class CostFragment extends Fragment {
         // enable rotation of the chart by touch
         pieChart.setRotationEnabled(false);
         pieChart.setHighlightPerTapEnabled(true);
-
-
 
 
         pieChart.setEntryLabelColor(Color.WHITE);

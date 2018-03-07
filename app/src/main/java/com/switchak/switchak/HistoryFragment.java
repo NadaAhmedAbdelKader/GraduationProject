@@ -1,10 +1,7 @@
 package com.switchak.switchak;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,28 +9,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -42,8 +30,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static android.content.ContentValues.TAG;
 
 
 public class HistoryFragment extends Fragment {
@@ -66,9 +52,9 @@ public class HistoryFragment extends Fragment {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        String userId = currentUser.getUid();
+        String userId = currentUser != null ? currentUser.getUid() : null;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("users").child(userId);
+        DatabaseReference myRef = database.getReference().child("users").child(userId != null ? userId : null);
 
         List<Entry> entries = new ArrayList<>();
 
@@ -77,7 +63,7 @@ public class HistoryFragment extends Fragment {
         entries.add(new Entry(16, (float) 10));
         entries.add(new Entry(20, (float) 15));
 
-        List< Timestamp > Time = new ArrayList<>();
+        List<Timestamp> Time = new ArrayList<>();
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
@@ -122,21 +108,21 @@ public class HistoryFragment extends Fragment {
 
         xAxis.setValueFormatter(new IAxisValueFormatter() {
 
-                                    private SimpleDateFormat mFormat = new SimpleDateFormat("dd  ");
+            private SimpleDateFormat mFormat = new SimpleDateFormat("dd  ");
 
 
-                                    @Override
-                                  public String getFormattedValue(float value, AxisBase axis) {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
 
-                                        long millis = TimeUnit.DAYS.toMillis((long) value);
-                                        return mFormat.format(new Date(millis));
-                                    }
+                long millis = TimeUnit.DAYS.toMillis((long) value);
+                return mFormat.format(new Date(millis));
+            }
         });
 
 
         YAxis yAxis = chart.getAxisLeft();
         yAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
-       // leftAxis.setTextColor(ColorTemplate.getHoloBlue());
+        // leftAxis.setTextColor(ColorTemplate.getHoloBlue());
 
         yAxis.setDrawGridLines(true);
         yAxis.setTextColor(Color.rgb(255, 192, 56));
