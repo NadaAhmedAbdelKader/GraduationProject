@@ -5,8 +5,6 @@
     tools:context="com.switchak.switchak.CostFragment"
     android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart"
         android:layout_width="match_parent"

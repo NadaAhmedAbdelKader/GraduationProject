@@ -47,7 +47,7 @@ public class FirebaseUtils extends Observable {
                     if (dataSnapshot.hasChild("power"))
                         room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
                     rooms.add(room);
-                    //TODO: notify rooms adapters that a room is added
+                    //TODO: notify rooms adapters that a room is added and implement the update
                     //notifyItemInserted(rooms.size() - 1);
                     Log.e("room item inserted", String.valueOf(room.isPower()) + dataSnapshot.getKey());
                 }
@@ -70,7 +70,7 @@ public class FirebaseUtils extends Observable {
                         room.setRoomName(dataSnapshot.child("room_name").getValue(String.class));
                     if (dataSnapshot.hasChild("power"))
                         room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
-                    //TODO: notify rooms adapters that a room is changed
+                    //TODO: notify rooms adapters that a room is changed and implement the update
                     //notifyItemChanged(index);
                     Log.e("room item changed", String.valueOf(room.isPower()) + dataSnapshot.getKey());
                 }
@@ -89,7 +89,7 @@ public class FirebaseUtils extends Observable {
 
                 if (index > -1) {
                     rooms.remove(index);
-                    //TODO: notify rooms adapters that a room is removed
+                    //TODO: notify rooms adapters that a room is removed and implement the update
                     //notifyItemRemoved(index);
                 }
             }
@@ -131,7 +131,7 @@ public class FirebaseUtils extends Observable {
                                 totalLatestReading = (float) Math.floor(totalLatestReading * 100) / 100;
                             }
                         }
-                        totalReading += totalLatestReading;
+                        totalReading += totalLatestReading / 3600;
 
                         //TODO: refer to these 2 lines for notifying
                         setChanged();
