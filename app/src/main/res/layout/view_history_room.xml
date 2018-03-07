@@ -9,35 +9,40 @@
     android:padding="7dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/circleImageView2"
+        android:id="@+id/circleImageView"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginStart="16dp"
         android:src="@drawable/plug"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_room_name"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="16dp" />
 
     <TextView
         android:id="@+id/tv_room_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:paddingLeft="15dp"
-        android:text="Fuse 3"
+        android:layout_marginStart="12dp"
+        android:text="Room"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="30sp"
-        app:layout_constraintStart_toEndOf="@+id/circleImageView2"
-        tools:layout_editor_absoluteY="7dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/circleImageView"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_room_reading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="44dp"
-        android:text="500 W"
+        android:layout_marginEnd="16dp"
+        android:text="0.0"
         android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="16dp" />
-
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

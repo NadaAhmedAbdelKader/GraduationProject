@@ -34,28 +34,16 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         return rooms;
     }
 
-    private final List<Room> rooms = new ArrayList<>();
+    private List<Room> rooms = new ArrayList<>();
     private int numberOfRooms;
     private String fragment;
-    private static RoomsAdapter INSTANCE = null ;
 
-    //Singleton pattern
-
-    public static RoomsAdapter getInstance(String fragment) {
-        if (INSTANCE == null) {
-            INSTANCE = new RoomsAdapter(fragment);
-        }
-        return(INSTANCE);
-    }
-
-
-   private RoomsAdapter(String fragment) {
+    RoomsAdapter(String fragment) {
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
 
         this.fragment = fragment;
-
 
         ChildEventListener roomsListener = new ChildEventListener() {
             @Override
@@ -82,11 +70,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                     index = Integer.parseInt(stringTokenizer.nextToken());
                     index--;
                 }
-//                for (int i = 0; i < rooms.size(); i++) {
-//                    if (rooms.get(i).getRoomId().equals(s))
-//                        index = i;
-//                }
-
                 if (index > -1) {
                     Room room = rooms.get(index);
                     room.setRoomId(dataSnapshot.getKey());
@@ -96,7 +79,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                         room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
                     notifyItemChanged(index);
                     Log.e("room item changed", String.valueOf(room.isPower()) + dataSnapshot.getKey());
-
                 }
             }
 
@@ -131,7 +113,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").addChildEventListener(roomsListener);
         myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").keepSynced(true);
 
-}
+    }
 
 
     @Override

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,54 +28,8 @@ import java.sql.Timestamp;
 import java.util.StringTokenizer;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link NowFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link NowFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class NowFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    public double totalReading;
 
-
-    private OnFragmentInteractionListener mListener;
-
-    public NowFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NowFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static NowFragment newInstance(String param1, String param2) {
-        NowFragment fragment = new NowFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            String mParam1 = getArguments().getString(ARG_PARAM1);
-            String mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
@@ -84,18 +39,17 @@ public class NowFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_now, container, false);
 
 
-        totalReading = 0f;
         RecyclerView mRoomsList = rootView.findViewById(R.id.rv_now_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
-      final  RoomsAdapter mAdapter = RoomsAdapter.getInstance("now");
+        final RoomsAdapter mAdapter = new RoomsAdapter("now");
         mRoomsList.setAdapter(mAdapter);
 
 
         //prototype
-        final TextView latestReadingTextView = (TextView) rootView.findViewById(R.id.tv_latest_reading);
-        final TextView totalReadingTextView = (TextView) rootView.findViewById(R.id.tv_total_reading);
-        final Switch powerToggleButton = (Switch) rootView.findViewById(R.id.tb_power);
+        final double[] totalReading = {0f};
+        final TextView latestReadingTextView = rootView.findViewById(R.id.tv_latest_reading);
+        final TextView totalReadingTextView = rootView.findViewById(R.id.tv_total_reading);
 
 
         FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getUid())
@@ -107,25 +61,25 @@ public class NowFragment extends Fragment {
 
                 StringTokenizer stringTokenizer = new StringTokenizer(values, ",", false);
 
-                double totalLatestReading = 0.0;
+                float totalLatestReading = 0;
 
                 for (int i = 0; i < mAdapter.getRooms().size(); i++) {
                     if (i == 0) {
-                        totalLatestReading = 0.0;
+                        totalLatestReading = 0;
                     }
                     if (stringTokenizer.hasMoreTokens()) {
-                        double reading = Double.parseDouble(stringTokenizer.nextToken().toString());
-                        reading = Math.floor(reading * 100) / 100;
+                        float reading = Float.parseFloat(stringTokenizer.nextToken().toString());
+                        reading = (float) Math.floor(reading * 100) / 100;
                         mAdapter.getRooms().get(i).getReadings().add(reading);
                         mAdapter.getRooms().get(i).addReadings(reading);
                         totalLatestReading = totalLatestReading + reading;
-                        totalLatestReading = Math.floor(totalLatestReading * 100) / 100;
+                        totalLatestReading = (float) Math.floor(totalLatestReading * 100) / 100;
                     }
                 }
 
                 latestReadingTextView.setText("" + totalLatestReading);
-                totalReading = totalReading + totalLatestReading;
-                totalReadingTextView.setText("" + totalReading);
+                totalReading[0] += totalLatestReading;
+                totalReadingTextView.setText("" + totalReading[0]);
 
                 for (int i = 0; i < mAdapter.getRooms().size(); i++) {
                     String time = dataSnapshot.getKey();
@@ -136,8 +90,6 @@ public class NowFragment extends Fragment {
                         //do nothing
                     }
                 }
-
-
             }
 
             @Override
@@ -161,95 +113,9 @@ public class NowFragment extends Fragment {
             }
         });
 
-        // Read from the database
-        FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getUid()).child("rooms")
-                .child("room_1").child("power").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                int value = dataSnapshot.getValue(Integer.class);
-                powerToggleButton.setChecked(value > 0);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-            }
-        });
-
-        powerToggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference(FirebaseAuth.getInstance().getUid())
-                        .child("rooms").child("room_1")
-                        .child("power");
-                if (powerToggleButton.isChecked()) {
-                    myRef.setValue(1);
-                } else {
-                    myRef.setValue(0);
-                }
-            }
-        });
-
-//        powerToggleButton.setOnCheckedChangeListener(new ToggleButton.OnCheckedChangeListener() {
-//
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                FirebaseDatabase database = FirebaseDatabase.getInstance();
-//                DatabaseReference myRef = database.getReference("power");
-//                if (b) {
-//                    myRef.setValue(1);
-//                } else {
-//                    myRef.setValue(0);
-//                }
-//            }
-//
-//        });
-
 
         // Inflate the layout for this fragment
         return rootView;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
 

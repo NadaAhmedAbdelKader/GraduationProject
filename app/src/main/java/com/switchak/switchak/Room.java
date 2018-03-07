@@ -15,23 +15,18 @@ class Room {
     private String roomId;
     private String roomName;
     private boolean power;
-    private List<Long> times = new ArrayList<>();
-    private List<Double> readings = new ArrayList<>();
+    private List<Float> readings = new ArrayList<>();
     private List<Timestamp> timestampList = new ArrayList<>();
-    private double totalreadings;
 
 
-    public double getTotalreadings() {
-        return totalreadings;
-    }
 
 
 
 
     //Total Readings for each room
-    Double totalReadings ;
+    float totalReadings ;
 
-    public void addReadings ( Double Reading)
+    public void addReadings ( Float Reading)
     {
         totalReadings = totalReadings + Reading;
     }
@@ -41,7 +36,7 @@ class Room {
     //Constructor that takes room name
     Room(String roomId) {
         this.roomId = roomId;
-        totalReadings = 0.0;
+        totalReadings = 0;
     }
 
     public Room(String roomId, String roomName, boolean power) {
@@ -52,7 +47,7 @@ class Room {
     }
 
     //Getters and setters
-    public Double getTotalReadings() {
+    public float getTotalReadings() {
         return totalReadings;
     }
 
@@ -80,19 +75,13 @@ class Room {
         this.timestampList = timestampList;
     }
 
-    public List<Long> getTimes() {
-        return times;
-    }
 
-    public void setTimes(List<Long> times) {
-        this.times = times;
-    }
 
-    public List<Double> getReadings() {
+    public List<Float> getReadings() {
         return readings;
     }
 
-    public void setReadings(List<Double> readings) {
+    public void setReadings(List<Float> readings) {
         this.readings = readings;
     }
 

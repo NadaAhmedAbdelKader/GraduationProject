@@ -13,7 +13,6 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="error_incorrect_email">This serial number is incorrect</string>
     <string name="error_message_failed_sign_in_no_network">Check your internet connection, then try again.</string>
     <string name="login_error">Login failed</string>
