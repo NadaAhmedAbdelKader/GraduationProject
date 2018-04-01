@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -16,75 +17,101 @@ import com.github.mikephil.charting.data.PieEntry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 
-public class CostFragment extends Fragment {
+public class CostFragment extends Fragment implements Observer {
+    PieChart pieChart;
+
+    RoomsAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_cost, container, false);
 
+        final View rootView = inflater.inflate(R.layout.fragment_cost, container, false);
         RecyclerView mRoomsList = rootView.findViewById(R.id.rv_cost_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
-        final RoomsAdapter mAdapter = new RoomsAdapter("history");
+        mAdapter = new RoomsAdapter("history");
         mRoomsList.setAdapter(mAdapter);
+        Button button = rootView.findViewById(R.id.jannat);
 
         //Jannat
 
-        int roomnum = FirebaseUtils.getInstance().getRooms().size();
+        // int roomnum = FirebaseUtils.getInstance().getRooms().size();
 
-        PieChart pieChart = rootView.findViewById(R.id.pie_chart);
-        pieChart.setUsePercentValues(true);
-
-        List<PieEntry> entries = new ArrayList<>();
-
-       /* entries.add(new PieEntry(1, (float) 12.5));
-        entries.add(new PieEntry(2, (float) 17.5));
-        entries.add(new PieEntry(3, (float) 10));
-        entries.add(new PieEntry(4, (float) 20)); */
-
-        for (int i = 0; i < roomnum; i++) {
-            entries.add(new PieEntry(FirebaseUtils.getInstance().getRooms().get(i).getTotalReadings()));
-        }
+        button.setOnClickListener(new View.OnClickListener() {
+                                      @Override
+                                      public void onClick(View v) {
+                                          int roomnum = mAdapter.getRooms().size();
 
 
-        PieDataSet dataSet = new PieDataSet(entries, "Label");
 
-        final int[] MY_COLORS = {Color.rgb(192, 192, 0), Color.rgb(255, 0, 0), Color.rgb(0, 0, 192), Color.rgb(0, 200, 0)};
-        ArrayList<Integer> colors = new ArrayList<>();
-
-        for (int c : MY_COLORS) colors.add(c);
-
-        dataSet.setColors(colors);
-        dataSet.setValueTextSize(15f);
+                                          pieChart = rootView.findViewById(R.id.pie_chart);
+                                          pieChart.setUsePercentValues(false);
 
 
-        PieData pieData = new PieData(dataSet);
-        pieChart.setData(pieData);
-        pieChart.invalidate(); // refresh
-        pieChart.setUsePercentValues(true);
-
-        pieChart.setDrawHoleEnabled(true);
-        pieChart.setHoleColor(Color.WHITE);
-
-        pieChart.setTransparentCircleColor(Color.WHITE);
-        pieChart.setTransparentCircleAlpha(110);
-
-        pieChart.setHoleRadius(60f);
-        pieChart.setTransparentCircleRadius(55f);
-
-        pieChart.setRotationAngle(0);
-        // enable rotation of the chart by touch
-        pieChart.setRotationEnabled(false);
-        pieChart.setHighlightPerTapEnabled(true);
+                                         List<PieEntry> entries= FirebaseUtils.getInstance().getEntries();
+//
+//                                          for (int i = 0; i < roomnum; i++) {
+//                                              entries.add(new PieEntry(mAdapter.getRooms().get(i).getTotalReadings()));
+//                                          }
 
 
-        pieChart.setEntryLabelColor(Color.WHITE);
+                                          PieDataSet dataSet = new PieDataSet(entries, "Label");
+
+                                          final int[] MY_COLORS = {Color.rgb(192, 192, 0), Color.rgb(255, 0, 0), Color.rgb(0, 0, 192), Color.rgb(0, 200, 0)};
+                                          ArrayList<Integer> colors = new ArrayList<>();
+
+                                          for (int c : MY_COLORS) colors.add(c);
+
+                                          dataSet.setColors(colors);
+                                          dataSet.setValueTextSize(15f);
+
+
+                                          PieData pieData = new PieData(dataSet);
+                                          pieChart.setData(pieData);
+                                          pieChart.invalidate(); // refresh
+                                          pieChart.setUsePercentValues(true);
+
+                                          pieChart.setDrawHoleEnabled(true);
+                                          pieChart.setHoleColor(Color.WHITE);
+
+                                          pieChart.setTransparentCircleColor(Color.WHITE);
+                                          pieChart.setTransparentCircleAlpha(110);
+
+                                          pieChart.setHoleRadius(60f);
+                                          pieChart.setTransparentCircleRadius(55f);
+
+                                          pieChart.setRotationAngle(0);
+
+                                          // enable rotation of the chart by touch
+                                          pieChart.setRotationEnabled(false);
+                                          pieChart.setHighlightPerTapEnabled(true);
+
+
+                                          pieChart.setEntryLabelColor(Color.WHITE);
+
+
+                                      }
+                                  });
 
         // Inflate the layout for this fragment
         return rootView;
+
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        mAdapter.notifyDataSetChanged();
+        pieChart.notifyDataSetChanged();
+
+        // entries.add(new PieEntry(mAdapter.getRooms().get(mAdapter.getRooms().size()-1).getTotalReadings()));
+
+
+
+    }
 }
+
