@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
@@ -27,7 +28,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
     private List<Room> rooms = FirebaseUtils.getInstance().getRooms();
     private String fragment;
-
     RoomsAdapter(String fragment) {
         this.fragment = fragment;
     }
@@ -36,6 +36,12 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
     @Override
     public RoomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
+
+        //keeping data fresh - Jannat
+
+        DatabaseReference roomsRef = FirebaseDatabase.getInstance().getReference().child("rooms");
+        roomsRef.keepSynced(true);
+
         int layoutIdForListItem;
         if (fragment.equals("now"))
             layoutIdForListItem = R.layout.view_now_room;
@@ -55,6 +61,10 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
     @Override
     public int getItemCount() {
         return rooms.size();
+    }
+
+    public List<Room> getRooms() {
+        return rooms;
     }
 
 

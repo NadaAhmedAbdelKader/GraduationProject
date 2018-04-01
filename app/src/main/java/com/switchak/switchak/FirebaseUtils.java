@@ -2,6 +2,7 @@ package com.switchak.switchak;
 
 import android.util.Log;
 
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +23,11 @@ import java.util.StringTokenizer;
  */
 
 class FirebaseUtils extends Observable {
+    public List<PieEntry> getEntries() {
+        return entries;
+    }
+
+    private final  List<PieEntry> entries = new ArrayList<>();
     private static final FirebaseUtils ourInstance = new FirebaseUtils();
     private float totalLatestReading;
     private float totalReading;
@@ -45,6 +51,7 @@ class FirebaseUtils extends Observable {
                     if (dataSnapshot.hasChild("power"))
                         room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
                     rooms.add(room);
+                    entries.add(new PieEntry(room.getTotalReadings()));
                     // TODO: 07/03/2018 notify rooms adapters that a room is added and implement the update
                     //notifyItemInserted(rooms.size() - 1);
                     Log.e("room item inserted", String.valueOf(room.isPower()) + dataSnapshot.getKey());
@@ -127,6 +134,8 @@ class FirebaseUtils extends Observable {
                                 rooms.get(i).addReadings(reading);
                                 totalLatestReading += reading;
                                 totalLatestReading = (float) Math.floor(totalLatestReading * 100) / 100;
+                                PieEntry entry = new PieEntry(totalLatestReading);
+                                entries.set(i, entry);
                             }
                         }
                         totalReading += (totalLatestReading / 3600);
