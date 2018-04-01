@@ -19,8 +19,8 @@ class Room {
     private String roomId;
     private String roomName;
     private boolean power;
-    private List<Float> readings = new ArrayList<>();
-    private List<Timestamp> timestampList = new ArrayList<>();
+    private final List<Float> readings = new ArrayList<>();
+    private final List<Timestamp> timestampList = new ArrayList<>();
 
     //Constructor that takes room name
     Room(String roomId) {

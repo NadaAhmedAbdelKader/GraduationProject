@@ -17,4 +17,12 @@
     <string name="error_message_failed_sign_in_no_network">Check your internet connection, then try again.</string>
     <string name="login_error">Login failed</string>
     <string name="action_sign_out">Sign out</string>
+    <string name="logo_description">Logo</string>
+    <string name="et_serial_hint">Serial Number</string>
+    <string name="et_password_hint">Password</string>
+    <string name="cb_remember_me_hint">Remember me</string>
+    <string name="tv_latest_reading_empty">0.0</string>
+    <string name="tv_latest_reading_unit">Watt</string>
+    <string name="tv_total_reading_empty">0.0</string>
+    <string name="tv_room_reading_empty">0.0</string>
 </resources>

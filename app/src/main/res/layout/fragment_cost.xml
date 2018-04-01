@@ -10,13 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="300dp" />
 
-    <Button
-        android:text="test"
-        android:id="@+id/jannat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_cost_rooms"
         android:layout_width="match_parent"

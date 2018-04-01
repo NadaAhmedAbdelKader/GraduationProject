@@ -55,7 +55,7 @@ public class HistoryFragment extends Fragment {
 
         String userId = currentUser != null ? currentUser.getUid() : null;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("users").child(userId != null ? userId : null);
+        DatabaseReference myRef = database.getReference().child("users").child(userId);
 
         Button btn =rootView.findViewById(R.id.histoTest);
 

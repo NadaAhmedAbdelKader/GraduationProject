@@ -1,9 +1,14 @@
 package com.switchak.switchak;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +38,7 @@ public class NowFragment extends Fragment implements Observer {
         mRoomsList.setLayoutManager(layoutManager);
         mAdapter = new RoomsAdapter("now");
         mRoomsList.setAdapter(mAdapter);
+        mRoomsList.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
 
         //prototype
@@ -61,7 +67,7 @@ public class NowFragment extends Fragment implements Observer {
     @Override
     public void update(Observable observable, Object o) {
         mAdapter.notifyDataSetChanged();
-        latestReadingTextView.setText("" + FirebaseUtils.getInstance().getTotalLatestReading());
-        totalReadingTextView.setText("" + FirebaseUtils.getInstance().getTotalReading());
+        latestReadingTextView.setText(String.valueOf(FirebaseUtils.getInstance().getTotalLatestReading()));
+        totalReadingTextView.setText(String.valueOf(FirebaseUtils.getInstance().getTotalReading()));
     }
 }

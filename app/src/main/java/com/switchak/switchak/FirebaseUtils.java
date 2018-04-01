@@ -31,7 +31,7 @@ class FirebaseUtils extends Observable {
     private static final FirebaseUtils ourInstance = new FirebaseUtils();
     private float totalLatestReading;
     private float totalReading;
-    private List<Room> rooms;
+    private final List<Room> rooms;
 
 
     private FirebaseUtils() {
@@ -53,6 +53,8 @@ class FirebaseUtils extends Observable {
                     rooms.add(room);
                     entries.add(new PieEntry(room.getTotalReadings()));
                     // TODO: 07/03/2018 notify rooms adapters that a room is added and implement the update
+                    setChanged();
+                    notifyObservers();
                     //notifyItemInserted(rooms.size() - 1);
                     Log.e("room item inserted", String.valueOf(room.isPower()) + dataSnapshot.getKey());
                 }
@@ -114,7 +116,8 @@ class FirebaseUtils extends Observable {
         myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").keepSynced(true);
 
 
-        ChildEventListener readingsListener = FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getUid())
+        ChildEventListener readingsListener = FirebaseDatabase.getInstance().getReference()
+                .child(FirebaseAuth.getInstance().getUid())
                 .child("readings").addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {

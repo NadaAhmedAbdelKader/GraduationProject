@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="0.0"
+                android:text="@string/tv_latest_reading_empty"
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textSize="100sp" />
 
@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Watt" />
+                android:text="@string/tv_latest_reading_unit" />
         </LinearLayout>
 
         <TextView
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="0.0"
+            android:text="@string/tv_total_reading_empty"
             android:textSize="30sp" />
 
     </LinearLayout>
