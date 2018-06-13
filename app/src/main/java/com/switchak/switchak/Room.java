@@ -14,7 +14,7 @@ class Room {
 
 
     //Total Readings for each room
-    private float totalReadings = 0f;
+    private float thisMonthReading = 0f;
     //Variables
     private String roomId;
     private String roomName;
@@ -25,17 +25,17 @@ class Room {
     //Constructor that takes room name
     Room(String roomId) {
         this.roomId = roomId;
-        totalReadings = 0;
+        thisMonthReading = 0;
     }
 
 
-    void addReadings(Float Reading) {
-        totalReadings = totalReadings + Reading;
+    void addReading(Float Reading) {
+        thisMonthReading = thisMonthReading + Reading;
     }
 
     //Getters and setters
-    float getTotalReadings() {
-        return totalReadings;
+    float getThisMonthReading() {
+        return thisMonthReading;
     }
 
     String getRoomId() {

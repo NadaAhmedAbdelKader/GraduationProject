@@ -89,7 +89,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
             if (fragment.equals("now")) {
                 roomPower.setChecked(room.isPower());
-                Log.e("toggle", String.valueOf(room.isPower()));
                 roomPower.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

@@ -22,7 +22,7 @@
     <string name="et_password_hint">Password</string>
     <string name="cb_remember_me_hint">Remember me</string>
     <string name="tv_latest_reading_empty">0.0</string>
-    <string name="tv_latest_reading_unit">Watt</string>
+    <string name="tv_latest_reading_unit">Watts</string>
     <string name="tv_total_reading_empty">0.0</string>
     <string name="tv_room_reading_empty">0.0</string>
 </resources>

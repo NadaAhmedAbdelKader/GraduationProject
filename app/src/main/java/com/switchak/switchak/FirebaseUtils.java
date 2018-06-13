@@ -2,6 +2,7 @@ package com.switchak.switchak;
 
 import android.util.Log;
 
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -9,9 +10,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Observable;
 import java.util.StringTokenizer;
@@ -27,21 +31,42 @@ class FirebaseUtils extends Observable {
         return entries;
     }
 
-    private final  List<PieEntry> entries = new ArrayList<>();
+    private final List<PieEntry> entries = new ArrayList<>();
     private static final FirebaseUtils ourInstance = new FirebaseUtils();
     private float totalLatestReading;
     private float totalReading;
     private final List<Room> rooms;
+    int roomsCount;
+    DatabaseReference myRef;
+    ChildEventListener roomsListener;
+    ChildEventListener readingsEventListener;
 
 
     private FirebaseUtils() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true);
-        DatabaseReference myRef = database.getReference();
+        myRef = database.getReference();
 
 
         rooms = new ArrayList<>();
-        ChildEventListener roomsListener = new ChildEventListener() {
+
+        roomsCount = -1;
+
+        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        roomsCount = (int) dataSnapshot.getChildrenCount();
+                        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").addChildEventListener(roomsListener);
+                        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").keepSynced(true);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+        roomsListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getKey() != null) {
@@ -51,12 +76,19 @@ class FirebaseUtils extends Observable {
                     if (dataSnapshot.hasChild("power"))
                         room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
                     rooms.add(room);
-                    entries.add(new PieEntry(room.getTotalReadings()));
+                    if (rooms.size() == roomsCount) {
+                        FirebaseDatabase.getInstance().getReference()
+                                .child(FirebaseAuth.getInstance().getUid())
+                                .child("readings").addChildEventListener(readingsEventListener);
+                        FirebaseDatabase.getInstance().getReference()
+                                .child(FirebaseAuth.getInstance().getUid())
+                                .child("readings").keepSynced(true);
+                    }
+                    entries.add(new PieEntry(room.getThisMonthReading()));
                     // TODO: 07/03/2018 notify rooms adapters that a room is added and implement the update
                     setChanged();
                     notifyObservers();
                     //notifyItemInserted(rooms.size() - 1);
-                    Log.e("room item inserted", String.valueOf(room.isPower()) + dataSnapshot.getKey());
                 }
             }
 
@@ -112,73 +144,84 @@ class FirebaseUtils extends Observable {
             }
         };
 
-        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").addChildEventListener(roomsListener);
-        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").keepSynced(true);
+        final Calendar calendar = new GregorianCalendar();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
+        totalReading = 0;
+        
+        readingsEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Object value = dataSnapshot.getValue();
+                String values = value != null ? value.toString() : null;
 
-        ChildEventListener readingsListener = FirebaseDatabase.getInstance().getReference()
-                .child(FirebaseAuth.getInstance().getUid())
-                .child("readings").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Object value = dataSnapshot.getValue();
-                        String values = value != null ? value.toString() : null;
+                StringTokenizer stringTokenizer = new StringTokenizer(values, ",", false);
 
-                        StringTokenizer stringTokenizer = new StringTokenizer(values, ",", false);
+                totalLatestReading = 0;
 
-                        totalLatestReading = 0;
-
-                        for (int i = 0; i < rooms.size(); i++) {
-                            if (i == 0) totalLatestReading = 0;
-                            if (stringTokenizer.hasMoreTokens()) {
-                                float reading = Float.parseFloat(stringTokenizer.nextToken());
-                                reading = (float) Math.floor(reading * 100) / 100;
-                                rooms.get(i).getReadings().add(reading);
-                                rooms.get(i).addReadings(reading);
-                                totalLatestReading += reading;
-                                totalLatestReading = (float) Math.floor(totalLatestReading * 100) / 100;
-                                PieEntry entry = new PieEntry(totalLatestReading);
-                                entries.set(i, entry);
-                            }
-                        }
-                        totalReading += (totalLatestReading / 3600);
-
-                        // TODO: 07/03/2018 refer to these 2 lines for notifying
-                        setChanged();
-                        notifyObservers();
-
-                        for (int i = 0; i < rooms.size(); i++) {
-                            String time = dataSnapshot.getKey();
-                            try {
-                                Timestamp timestamp = new Timestamp(Long.parseLong(time));
-                                rooms.get(i).getTimestampList().add(timestamp);
-                            } catch (NumberFormatException e) {
-                                //do nothing
-                            }
-                        }
+                for (int i = 0; i < rooms.size(); i++) {
+                    if (i == 0) totalLatestReading = 0;
+                    if (stringTokenizer.hasMoreTokens()) {
+                        float reading = Float.parseFloat(stringTokenizer.nextToken());
+                        reading = (float) Math.floor(reading * 100) / 100;
+                        //add the room reading to the list of readings of that room
+                        rooms.get(i).getReadings().add(reading);
+                        //increase the sum this month readings by that reading
+                        if (Long.parseLong(dataSnapshot.getKey()) > calendar.getTime().getTime())
+                            rooms.get(i).addReading(reading);
+                        totalLatestReading += reading;
+                        totalLatestReading = (float) Math.floor(totalLatestReading * 100) / 100;
+                        PieEntry entry = new PieEntry(rooms.get(i).getThisMonthReading());
+                        entries.set(i, entry);
                     }
+                }
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
+                totalReading += (totalLatestReading / 3600);
+
+
+                for (int i = 0; i < rooms.size(); i++) {
+                    String time = dataSnapshot.getKey();
+                    try {
+                        Timestamp timestamp = new Timestamp(Long.parseLong(time));
+                        rooms.get(i).getTimestampList().add(timestamp);
+                    } catch (NumberFormatException e) {
+                        //do nothing
                     }
+                }
 
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                House.getInstance().getDataSet()
+                        .addEntry(new BarEntry(Float.parseFloat(dataSnapshot.getKey()), totalLatestReading));
 
-                    }
+                // TODO: 07/03/2018 refer to these 2 lines for notifying
+                setChanged();
+                notifyObservers();
+            }
 
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                    }
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                    }
-                });
+            }
 
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
 
     }
 

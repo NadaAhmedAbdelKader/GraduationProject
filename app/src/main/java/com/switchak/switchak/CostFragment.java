@@ -16,6 +16,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -43,8 +45,6 @@ public class CostFragment extends Fragment implements Observer {
         mRoomsList.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
 
-        pieChart = rootView.findViewById(R.id.pie_chart);
-        entries = FirebaseUtils.getInstance().getEntries();
         dataSet = new PieDataSet(entries, "Label");
         pieData = new PieData(dataSet);
 
@@ -72,11 +72,17 @@ public class CostFragment extends Fragment implements Observer {
 
         pieChart.setData(pieData);
         pieChart.invalidate();
-        
+
         FirebaseUtils.getInstance().addObserver(this);
         update(null, null);
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        FirebaseUtils.getInstance().deleteObserver(this);
     }
 
     @Override

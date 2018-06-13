@@ -8,19 +8,12 @@
 
 
 
-    <com.github.mikephil.charting.charts.LineChart
+    <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="300dp">
 
-    </com.github.mikephil.charting.charts.LineChart>
-
-    <Button
-        android:text="test"
-        android:id="@+id/histoTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+    </com.github.mikephil.charting.charts.BarChart>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_history_rooms"
