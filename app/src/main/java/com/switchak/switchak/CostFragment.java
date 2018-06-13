@@ -45,7 +45,9 @@ public class CostFragment extends Fragment implements Observer {
         mRoomsList.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
 
-        dataSet = new PieDataSet(entries, "Label");
+        pieChart = rootView.findViewById(R.id.pie_chart);
+        entries = FirebaseUtils.getInstance().getEntries();
+        dataSet = new PieDataSet(entries, "Usage percentage");
         pieData = new PieData(dataSet);
 
 

@@ -11,16 +11,20 @@ import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
 
 
 public class HistoryFragment extends Fragment implements Observer {
@@ -73,18 +77,19 @@ public class HistoryFragment extends Fragment implements Observer {
 //        xAxis.setAxisMaximum(31);
 //
 //
-//        xAxis.setValueFormatter(new IAxisValueFormatter() {
-//
-//            private SimpleDateFormat mFormat = new SimpleDateFormat("dd  ");
-//
-//
-//            @Override
-//            public String getFormattedValue(float value, AxisBase axis) {
-//
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+
+            private SimpleDateFormat mFormat = new SimpleDateFormat("dd  ");
+
+
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                Calendar c = new GregorianCalendar();
+                c.setTimeInMillis((long) value);
 //                long millis = TimeUnit.DAYS.toMillis((long) value);
-//                return mFormat.format(new Date(millis));
-//            }
-//        });
+                return mFormat.format(c.get(Calendar.DAY_OF_MONTH));
+            }
+        });
 //
 //
         YAxis yAxis = chart.getAxisLeft();
@@ -115,8 +120,8 @@ public class HistoryFragment extends Fragment implements Observer {
 
 
         // enable scaling and dragging
-//        chart.setDragEnabled(true);
-//        chart.setScaleEnabled(true);
+        chart.setDragEnabled(false);
+        chart.setScaleEnabled(false);
 
 
         //Registering observer
