@@ -1,9 +1,8 @@
 package com.switchak.switchak;
 
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +10,11 @@ import java.util.List;
 public class House {
 
 
+    private final List<PieEntry> pieEntries = new ArrayList<>();
+
     private static final House ourInstance = new House();
-    private List<BarEntry> entries;
-    private Float firstTimeStamp;
-    private BarDataSet dataSet;
+    private final List<Entry> entries;
+    private final LineDataSet dataSet;
 
     public static House getInstance() {
         return ourInstance;
@@ -22,22 +22,23 @@ public class House {
 
     private House() {
         entries = new ArrayList<>();
-        dataSet = new BarDataSet(getEntries(), "kWatts");
+        dataSet = new LineDataSet(entries, "kWatts");
     }
 
-    public void setFirstTimeStamp(Float timeStamp) {
-        firstTimeStamp = timeStamp;
-    }
-
-    public List<BarEntry> getEntries() {
+    public List<Entry> getEntries() {
         return entries;
     }
 
-    public BarDataSet getDataSet() {
+    public LineDataSet getDataSet() {
         return dataSet;
     }
 
-    public Float getFirstTimeStamp() {
-        return firstTimeStamp;
+    public List<Room> getRooms() {
+        return FirebaseUtils.getInstance().getRooms();
     }
+
+    public List<PieEntry> getPieEntries() {
+        return pieEntries;
+    }
+
 }

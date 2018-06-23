@@ -2,7 +2,7 @@ package com.switchak.switchak;
 
 import android.util.Log;
 
-import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -15,6 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Observable;
@@ -27,19 +28,22 @@ import java.util.StringTokenizer;
  */
 
 class FirebaseUtils extends Observable {
-    public List<PieEntry> getEntries() {
-        return entries;
-    }
+    public static final int READING_ADDED = 0;
+    public static final int PERIOD_CHANGED = 1;
 
-    private final List<PieEntry> entries = new ArrayList<>();
+
     private static final FirebaseUtils ourInstance = new FirebaseUtils();
     private float totalLatestReading;
     private float totalReading;
     private final List<Room> rooms;
-    int roomsCount;
-    DatabaseReference myRef;
-    ChildEventListener roomsListener;
-    ChildEventListener readingsEventListener;
+    private int roomsCount;
+    private final DatabaseReference myRef;
+    private ChildEventListener roomsListener;
+    private ChildEventListener readingsEventListener;
+    private int monthSelection;
+    private int daySelection;
+    private long beginningTime;
+    private long endTime;
 
 
     private FirebaseUtils() {
@@ -51,7 +55,13 @@ class FirebaseUtils extends Observable {
         rooms = new ArrayList<>();
 
         roomsCount = -1;
+        monthSelection = -1;
+        daySelection = -1;
+        setMonthSelection(0);
+        setDaySelection(0);
 
+
+        //Initial listener to get the number of rooms (used to create objects of rooms first before populating these objects with data)
         myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -66,6 +76,8 @@ class FirebaseUtils extends Observable {
 
                     }
                 });
+
+
         roomsListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -76,6 +88,8 @@ class FirebaseUtils extends Observable {
                     if (dataSnapshot.hasChild("power"))
                         room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
                     rooms.add(room);
+
+                    //When all rooms are added start getting readings data
                     if (rooms.size() == roomsCount) {
                         FirebaseDatabase.getInstance().getReference()
                                 .child(FirebaseAuth.getInstance().getUid())
@@ -84,11 +98,12 @@ class FirebaseUtils extends Observable {
                                 .child(FirebaseAuth.getInstance().getUid())
                                 .child("readings").keepSynced(true);
                     }
-                    entries.add(new PieEntry(room.getThisMonthReading()));
-                    // TODO: 07/03/2018 notify rooms adapters that a room is added and implement the update
+                    House.getInstance().getPieEntries().add(new PieEntry(0));
+
+                    // 07/03/2018 notify rooms adapters that a room is added and implement the update
                     setChanged();
                     notifyObservers();
-                    //notifyItemInserted(rooms.size() - 1);
+
                 }
             }
 
@@ -144,6 +159,7 @@ class FirebaseUtils extends Observable {
             }
         };
 
+        //set calender to the beginning of current month
         final Calendar calendar = new GregorianCalendar();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -152,7 +168,7 @@ class FirebaseUtils extends Observable {
         calendar.set(Calendar.MILLISECOND, 0);
 
         totalReading = 0;
-        
+
         readingsEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -163,25 +179,32 @@ class FirebaseUtils extends Observable {
 
                 totalLatestReading = 0;
 
+                boolean readingBelongsToThisMonth = Long.parseLong(dataSnapshot.getKey()) > calendar.getTime().getTime();
+
                 for (int i = 0; i < rooms.size(); i++) {
                     if (i == 0) totalLatestReading = 0;
                     if (stringTokenizer.hasMoreTokens()) {
                         float reading = Float.parseFloat(stringTokenizer.nextToken());
                         reading = (float) Math.floor(reading * 100) / 100;
+
                         //add the room reading to the list of readings of that room
                         rooms.get(i).getReadings().add(reading);
+
                         //increase the sum this month readings by that reading
-                        if (Long.parseLong(dataSnapshot.getKey()) > calendar.getTime().getTime())
+                        if (readingBelongsToThisMonth)
                             rooms.get(i).addReading(reading);
+
                         totalLatestReading += reading;
                         totalLatestReading = (float) Math.floor(totalLatestReading * 100) / 100;
-                        PieEntry entry = new PieEntry(rooms.get(i).getThisMonthReading());
-                        entries.set(i, entry);
+//                        PieEntry entry = new PieEntry(rooms.get(i).getThisMonthReading());
+//                        entries.set(i, entry);
                     }
                 }
 
-
-                totalReading += (totalLatestReading / 3600);
+                if (readingBelongsToThisMonth) {
+                    totalReading += (totalLatestReading / 3600);
+                    totalReading = (float) (Math.floor(totalReading * 100000) / 100000);
+                }
 
 
                 for (int i = 0; i < rooms.size(); i++) {
@@ -195,11 +218,11 @@ class FirebaseUtils extends Observable {
                 }
 
                 House.getInstance().getDataSet()
-                        .addEntry(new BarEntry(Float.parseFloat(dataSnapshot.getKey()), totalLatestReading));
+                        .addEntry(new Entry(Float.parseFloat(dataSnapshot.getKey()), totalLatestReading));
 
-                // TODO: 07/03/2018 refer to these 2 lines for notifying
+                // 07/03/2018 notifying observers
                 setChanged();
-                notifyObservers();
+                notifyObservers(READING_ADDED);
             }
 
             @Override
@@ -241,5 +264,102 @@ class FirebaseUtils extends Observable {
         return rooms;
     }
 
+    public void setMonthSelection(int monthSelection) {
+        if (monthSelection != this.monthSelection) {
+            this.monthSelection = monthSelection;
 
+            //set calender to beginning of selected month
+            Calendar calendar = new GregorianCalendar();
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.set(Calendar.MONTH, Calendar.getInstance().get(Calendar.MONTH) - monthSelection);
+
+            //set beginningTime to the corresponding selection
+            beginningTime = calendar.getTime().getTime();
+
+            //set calender to end to selected month
+            calendar.set(Calendar.MONTH, Calendar.getInstance().get(Calendar.MONTH) - monthSelection + 1);
+
+            //set endTime to the corresponding selection
+            endTime = calendar.getTime().getTime();
+
+            daySelection = 0;
+            setChanged();
+            notifyObservers(PERIOD_CHANGED);
+        }
+    }
+
+    public int getMonthSelection() {
+        return monthSelection;
+    }
+
+    public int getDaySelection() {
+        return daySelection;
+    }
+
+    public void setDaySelection(int daySelection) {
+        if (daySelection != this.daySelection) {
+            this.daySelection = daySelection;
+
+
+            if (daySelection == 0) {
+                //set calender to beginning of selected month
+                Calendar calendar = new GregorianCalendar();
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                calendar.set(Calendar.MONTH, Calendar.getInstance().get(Calendar.MONTH) - monthSelection);
+
+                //set beginningTime to the corresponding selection
+                beginningTime = calendar.getTime().getTime();
+
+                //set calender to end to selected month
+                calendar.set(Calendar.MONTH, Calendar.getInstance().get(Calendar.MONTH) - monthSelection + 1);
+
+                //set endTime to the corresponding selection
+                endTime = calendar.getTime().getTime();
+            }
+
+
+            if (daySelection != 0) {
+                //set calender to beginning of selected month
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime(new Date(beginningTime));
+
+                if (monthSelection == 0) {
+                    calendar.set(Calendar.DAY_OF_MONTH, Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - daySelection + 1);
+                    //set beginningTime to the corresponding selection
+                    beginningTime = calendar.getTime().getTime();
+
+                    calendar.set(Calendar.DAY_OF_MONTH, Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - daySelection + 2);
+                    //set endTime to the corresponding selection
+                    endTime = calendar.getTime().getTime();
+
+                } else {
+                    calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH) - daySelection + 1);
+                    //set beginningTime to the corresponding selection
+                    beginningTime = calendar.getTime().getTime();
+
+                    calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH) - daySelection + 2);
+                    //set endTime to the corresponding selection
+                    endTime = calendar.getTime().getTime();
+                }
+            }
+            setChanged();
+            notifyObservers(PERIOD_CHANGED);
+        }
+    }
+
+    public long getBeginningTime() {
+        return beginningTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
 }

@@ -6,14 +6,19 @@
     tools:context="com.switchak.switchak.HistoryFragment">
 
 
+    <LinearLayout
+        android:id="@+id/fragment_change_period"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal" />
 
 
-    <com.github.mikephil.charting.charts.BarChart
+    <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="250dp">
 
-    </com.github.mikephil.charting.charts.BarChart>
+    </com.github.mikephil.charting.charts.LineChart>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_history_rooms"

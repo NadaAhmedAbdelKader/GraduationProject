@@ -5,10 +5,16 @@
     android:orientation="vertical"
     tools:context="com.switchak.switchak.CostFragment">
 
+    <LinearLayout
+        android:id="@+id/fragment_change_period"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"/>
+
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
+        android:layout_height="250dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_cost_rooms"

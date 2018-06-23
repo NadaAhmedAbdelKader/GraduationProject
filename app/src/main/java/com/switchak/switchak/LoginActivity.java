@@ -28,6 +28,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -150,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // If sign in fails, display a message to the user.
 
                                 try {
-                                    throw task.getException();
+                                    throw Objects.requireNonNull(task.getException());
                                 } catch (FirebaseAuthInvalidUserException e) {
                                     mEmailView.setError(getString(R.string.error_incorrect_email));
                                     mEmailView.requestFocus();

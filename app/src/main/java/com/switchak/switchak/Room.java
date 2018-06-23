@@ -14,7 +14,7 @@ class Room {
 
 
     //Total Readings for each room
-    private float thisMonthReading = 0f;
+    private float thisMonthReading;
     //Variables
     private String roomId;
     private String roomName;

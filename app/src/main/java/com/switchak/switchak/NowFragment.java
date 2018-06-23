@@ -2,18 +2,16 @@ package com.switchak.switchak;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -26,7 +24,7 @@ public class NowFragment extends Fragment implements Observer {
     private TextView totalReadingTextView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
 
@@ -38,7 +36,7 @@ public class NowFragment extends Fragment implements Observer {
         mRoomsList.setLayoutManager(layoutManager);
         mAdapter = new RoomsAdapter("now");
         mRoomsList.setAdapter(mAdapter);
-        mRoomsList.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        mRoomsList.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL));
 
 
         //prototype

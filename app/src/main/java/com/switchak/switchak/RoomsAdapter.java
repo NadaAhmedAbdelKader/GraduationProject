@@ -1,8 +1,8 @@
 package com.switchak.switchak;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Osama on 08/02/2018.
@@ -26,15 +27,16 @@ import java.util.List;
 public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHolder> {
 
 
-    private List<Room> rooms = FirebaseUtils.getInstance().getRooms();
-    private String fragment;
+    private final List<Room> rooms = FirebaseUtils.getInstance().getRooms();
+    private final String fragment;
     RoomsAdapter(String fragment) {
         this.fragment = fragment;
     }
 
 
+    @NonNull
     @Override
-    public RoomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RoomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
 
         //keeping data fresh - Jannat
@@ -54,7 +56,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
     }
 
     @Override
-    public void onBindViewHolder(RoomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
         holder.bind(rooms.get(position));
     }
 
@@ -63,15 +65,11 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         return rooms.size();
     }
 
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
 
     class RoomViewHolder extends RecyclerView.ViewHolder {
-        TextView roomName;
-        TextView roomReading;
-        Switch roomPower;
+        final TextView roomName;
+        final TextView roomReading;
+        final Switch roomPower;
 
         RoomViewHolder(View itemView, String fragment) {
             super(itemView);
@@ -92,7 +90,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                 roomPower.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FirebaseDatabase.getInstance().getReference().child(FirebaseAuth.getInstance().getUid())
+                        FirebaseDatabase.getInstance().getReference().child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                                 .child("rooms").child(room.getRoomId()).child("power").setValue(roomPower.isChecked() ? 1 : 0);
                     }
                 });
