@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -32,7 +33,8 @@ public class CostFragment extends Fragment implements Observer {
     private PieData pieData;
     private long beginningTime = FirebaseUtils.getInstance().getBeginningTime();
     private long endTime = FirebaseUtils.getInstance().getEndTime();
-
+    private String totalReading ;
+    private double cost ;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -53,6 +55,7 @@ public class CostFragment extends Fragment implements Observer {
 
         pieChart = rootView.findViewById(R.id.pie_chart);
         pieEntries = House.getInstance().getPieEntries();
+
         dataSet = new PieDataSet(pieEntries, "Usage percentage");
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         dataSet.setValueTextSize(15f);
@@ -128,6 +131,28 @@ public class CostFragment extends Fragment implements Observer {
             pieChart.notifyDataSetChanged();
             pieChart.animateXY(1000, 1000);
         }
+    }
+
+
+    public double cost (Observable observe , float value ){
+        totalReading= String.valueOf(FirebaseUtils.getInstance().getTotalLatestReading());
+        value = Float.parseFloat(totalReading);
+        if(value>=0 && value<=50)
+            cost =value * 0.13;
+        else if(value>=51 && value<=100)
+            cost=value*0.22;
+        else if(value>100 && value<=200)
+            cost=value*0.22;
+        else if(value>200 && value<=350)
+            cost=value*0.45;
+        else if(value>350 && value<=650)
+            cost=value*0.55;
+        else if(value>650 && value<=1000)
+            cost=value*0.95;
+        else if(value>1000)
+            cost=value*1.35;
+        return cost ;
+
     }
 }
 
