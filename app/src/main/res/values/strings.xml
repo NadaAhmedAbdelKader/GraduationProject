@@ -25,9 +25,7 @@
     <string name="tv_latest_reading_unit">Watts</string>
     <string name="tv_total_reading_empty">0.0</string>
     <string name="tv_room_reading_empty">0.0</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="Budget">budget</string>
     <string name="change_period">Change Period</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="recommendations">Recommendation</string>
 </resources>

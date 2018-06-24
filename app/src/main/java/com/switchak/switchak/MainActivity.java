@@ -1,5 +1,6 @@
 package com.switchak.switchak;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -83,11 +84,17 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+
         }
 
         if (id == R.id.action_sign_out) {
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        if (id == R.id.recommendations) {
+            Intent intent = new Intent(MainActivity.this, RecommendationsActivity.class);
             startActivity(intent);
             finish();
         }

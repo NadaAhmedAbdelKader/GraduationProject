@@ -43,7 +43,6 @@
 
     </LinearLayout>
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_now_rooms"
         android:layout_width="match_parent"

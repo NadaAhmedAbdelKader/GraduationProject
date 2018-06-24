@@ -4,12 +4,17 @@
     tools:context="com.switchak.switchak.MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="200"
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_sign_out"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         android:title="@string/action_sign_out"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/recommendations"
+        android:orderInCategory="100"
+        android:title="@string/recommendations"
+        app:showAsAction="never"/>
 </menu>

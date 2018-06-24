@@ -1,0 +1,75 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="com.switchak.switchak.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+
+        app:title="Recommendations"
+        app:titleTextColor="#FFF">
+
+    </android.support.v7.widget.Toolbar>
+
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:theme="@style/AppTheme.AppBarOverlay">-->
+
+
+
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="?attr/actionBarSize"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:background="?attr/colorPrimary"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:padding="@dimen/activity_vertical_margin"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="@string/recommendations"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textAppearance="@style/TextAppearance.AppCompat"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textSize="18sp"/>&ndash;&gt;-->
+
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="214dp"
+        android:layout_height="31dp"
+        android:text="@string/Budget"
+        android:layout_margin="@dimen/appbar_padding_top">
+
+    </TextView>
+
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/appbar_padding_top"
+        android:max="10000"
+        android:progress="50"/>
+
+    <LinearLayout
+        android:id="@+id/priority_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    </LinearLayout>
+
+</LinearLayout>
