@@ -88,27 +88,29 @@ public class HistoryFragment extends Fragment implements Observer {
         YAxis rightAxis = chart.getAxisRight();
         rightAxis.setEnabled(false);
 
-        yAxis.setAxisMinimum(0);
+//        yAxis.setAxisMinimum(0);
 
 
         lineDataSet = House.getInstance().getDataSet();
         lineDataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
         lineDataSet.setColor(Color.BLUE);
-        lineDataSet.setLineWidth(3);
+        lineDataSet.setLineWidth(4);
         lineDataSet.setDrawFilled(true);
 
-        lineData = new LineData(lineDataSet);
 
         // enable scaling and dragging
         chart.setDragXEnabled(true);
         chart.setScaleXEnabled(true);
         chart.setScaleYEnabled(false);
-        chart.setVisibleXRangeMinimum(2147483647); //max float number
-        xAxis.setLabelCount(4);
+//        chart.setVisibleXRangeMinimum(2147483647); //max float number 2147483647
+        chart.setAutoScaleMinMaxEnabled(true);
+
+        xAxis.setLabelCount(5);
 
 
         lineDataSet.setDrawHighlightIndicators(false);
         lineDataSet.setDrawFilled(true);
+        lineData = new LineData(lineDataSet);
 
 
         //Registering observer
@@ -139,12 +141,15 @@ public class HistoryFragment extends Fragment implements Observer {
         if (House.getInstance().getEntries().size() > 0)
             chart.setData(lineData);
 
+        lineDataSet.notifyDataSetChanged();
         lineData.notifyDataChanged();
         chart.notifyDataSetChanged();
         if (FirebaseUtils.getInstance().getBeginningTime() != chart.getXAxis().getAxisMinimum()
                 || FirebaseUtils.getInstance().getEndTime() != chart.getXAxis().getAxisMaximum()) {
             chart.getXAxis().setAxisMinimum(FirebaseUtils.getInstance().getBeginningTime());
             chart.getXAxis().setAxisMaximum(FirebaseUtils.getInstance().getEndTime());
+            chart.fitScreen();
+            chart.setVisibleXRangeMinimum(3600000 * 5); //milliseconds in an hour = 3600000, we have 5 X lines
             chart.animateY(1000);
         } else chart.invalidate();
         mAdapter.notifyDataSetChanged();

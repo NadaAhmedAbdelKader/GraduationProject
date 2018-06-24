@@ -54,9 +54,10 @@ public class CostFragment extends Fragment implements Observer {
         pieChart = rootView.findViewById(R.id.pie_chart);
         pieEntries = House.getInstance().getPieEntries();
         dataSet = new PieDataSet(pieEntries, "Usage percentage");
-        pieData = new PieData(dataSet);
-
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        dataSet.setValueTextSize(15f);
+        dataSet.setSliceSpace(5);
+
 
         pieChart.setUsePercentValues(true);
 
@@ -66,10 +67,8 @@ public class CostFragment extends Fragment implements Observer {
         pieChart.setHighlightPerTapEnabled(true);
 
         pieChart.setEntryLabelColor(Color.WHITE);
-        dataSet.setValueTextSize(15f);
-        dataSet.setSliceSpace(5);
 
-        pieChart.setData(pieData);
+        pieData = new PieData(dataSet);
 
         FirebaseUtils.getInstance().addObserver(this);
         update(null, null);
@@ -94,13 +93,18 @@ public class CostFragment extends Fragment implements Observer {
 
         mAdapter.notifyDataSetChanged();
 
+        if (House.getInstance().getPieEntries().size() > 0)
+            pieChart.setData(pieData);
+
         if (arg != null && (int) arg == FirebaseUtils.READING_ADDED) {
-            if (House.getInstance().getEntries().get(House.getInstance().getEntries().size() - 1).getX() >= beginningTime
-                    && House.getInstance().getEntries().get(House.getInstance().getEntries().size() - 1).getX() < endTime) {
+            float timeOfLastReading = House.getInstance().getEntries().get(House.getInstance().getEntries().size() - 1).getX();
+            if (timeOfLastReading >= beginningTime
+                    && timeOfLastReading < endTime) {
                 for (int i = 0; i < House.getInstance().getRooms().size(); i++) {
                     pieEntries.set(i, new PieEntry(pieEntries.get(i).getValue() + House.getInstance().getRooms().get(i)
                             .getReadings().get(House.getInstance().getEntries().size() - 1)));
                 }
+                pieData.notifyDataChanged();
                 pieChart.notifyDataSetChanged();
                 pieChart.invalidate();
             }
@@ -120,6 +124,7 @@ public class CostFragment extends Fragment implements Observer {
                 }
                 pieEntries.set(i, new PieEntry(roomIReading));
             }
+            pieData.notifyDataChanged();
             pieChart.notifyDataSetChanged();
             pieChart.animateXY(1000, 1000);
         }

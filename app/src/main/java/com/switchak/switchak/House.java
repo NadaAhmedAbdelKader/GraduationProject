@@ -10,7 +10,7 @@ import java.util.List;
 public class House {
 
 
-    private final List<PieEntry> pieEntries = new ArrayList<>();
+    private final List<PieEntry> pieEntries;
 
     private static final House ourInstance = new House();
     private final List<Entry> entries;
@@ -22,6 +22,7 @@ public class House {
 
     private House() {
         entries = new ArrayList<>();
+        pieEntries = new ArrayList<>();
         dataSet = new LineDataSet(entries, "kWatts");
     }
 
