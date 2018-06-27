@@ -162,7 +162,7 @@ public class CostFragment extends Fragment implements Observer {
                 }
                 pieEntries.set(i, new PieEntry(getCostFromUsage(roomIReading)));
                 pieEntries.set(i, new PieEntry(roomIReading));
-//                FirebaseUtils.getInstance().getRooms().get(i).setSelectedPeriodReading(roomIReading);
+                FirebaseUtils.getInstance().getRooms().get(i).setSelectedPeriodReading(roomIReading);
             }
             pieData.notifyDataChanged();
             pieChart.notifyDataSetChanged();
