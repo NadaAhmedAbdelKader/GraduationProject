@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Locale;
+import java.text.DecimalFormat;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -64,9 +64,8 @@ public class NowFragment extends Fragment implements Observer {
     //Implementation for the Observer interface to update the fragment views
     @Override
     public void update(Observable observable, Object o) {
-        latestReadingTextView.setText(String.format(Locale.US, "%.2g", FirebaseUtils.getInstance().getTotalLatestReading()))
-        ;
-        totalReadingTextView.setText(String.format(Locale.US, "%.4g", FirebaseUtils.getInstance().getTotalReading()));
+        latestReadingTextView.setText(new DecimalFormat("#.##").format(FirebaseUtils.getInstance().getTotalLatestReading()));
+        totalReadingTextView.setText(new DecimalFormat("#.####").format(FirebaseUtils.getInstance().getTotalReading()));
         mAdapter.notifyDataSetChanged();
     }
 }

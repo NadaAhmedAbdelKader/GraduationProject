@@ -18,8 +18,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Osama on 08/02/2018.
@@ -141,7 +141,8 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                                         .child(FirebaseAuth.getInstance().getUid()).child("rooms")
                                         .child(room.getRoomId())
                                         .child("room_name")
-                                        .setValue(editText.toString());
+                                        .setValue(editText.getText().toString());
+                                notifyDataSetChanged();
                             }
                         });
                         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -166,15 +167,12 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             }
 
             try {
-//                roomReading.setText(String.format(Locale.US, "%.2f", room.getReadings().get(room.getReadings().size() - 1)));
-
                 if (fragment.equals("history"))
-                    roomReading.setText(String.format(Locale.US, "%.2g", room.getSelectedPeriodReading()));
+                    roomReading.setText(new DecimalFormat("#.##").format(room.getSelectedPeriodReading()));
                 else if (fragment.equals("cost"))
-//                    roomReading.setText(String.format(Locale.US, "%.2g", getCostFromUsage(room.getSelectedPeriodReading())));
-                    roomReading.setText(String.format(Locale.US, "%.2g", room.getSelectedPeriodReading()));
+                    roomReading.setText(new DecimalFormat("#.##").format(room.getSelectedPeriodReading()));
                 else if (fragment.equals("now"))
-                    roomReading.setText(String.format(Locale.US, "%.2g", room.getReadings().get(room.getReadings().size() - 1)));
+                    roomReading.setText(new DecimalFormat("#.##").format(room.getReadings().get(room.getReadings().size() - 1)));
 
             } catch (Exception e) {
                 roomReading.setText("");

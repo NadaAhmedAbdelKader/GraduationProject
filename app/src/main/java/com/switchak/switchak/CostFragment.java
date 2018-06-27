@@ -13,16 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -127,16 +123,23 @@ public class CostFragment extends Fragment implements Observer {
         if (House.getInstance().getPieEntries().size() > 0)
             pieChart.setData(pieData);
 
+        pieData.notifyDataChanged();
+        pieChart.notifyDataSetChanged();
+
         if (arg != null && (int) arg == FirebaseUtils.READING_ADDED) {
             float timeOfLastReading = House.getInstance().getEntries().get(House.getInstance().getEntries().size() - 1).getX();
             if (timeOfLastReading >= beginningTime
                     && timeOfLastReading < endTime) {
                 for (int i = 0; i < House.getInstance().getRooms().size(); i++) {
-                    float newReading = pieEntries.get(i).getValue() + House.getInstance().getRooms().get(i)
-                            .getReadings().get(House.getInstance().getEntries().size() - 1);
-//                    pieEntries.set(i, new PieEntry(getCostFromUsage(newReading)));
-                    pieEntries.set(i, new PieEntry(newReading));
-                    FirebaseUtils.getInstance().getRooms().get(i).setSelectedPeriodReading(newReading);
+
+
+                    if (House.getInstance().getRooms().get(i).getReadings().size() > 0) {
+                        float newReading = pieEntries.get(i).getValue() + House.getInstance().getRooms().get(i)
+                                .getReadings().get(House.getInstance().getRooms().get(i).getReadings().size() - 1);
+
+                        pieEntries.set(i, new PieEntry(newReading));
+                        FirebaseUtils.getInstance().getRooms().get(i).setSelectedPeriodReading(newReading);
+                    }
                 }
                 pieData.notifyDataChanged();
                 pieChart.notifyDataSetChanged();

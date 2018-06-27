@@ -66,6 +66,7 @@ class FirebaseUtils extends Observable {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.e("child name", dataSnapshot.getKey());
                         roomsCount = (int) dataSnapshot.getChildrenCount();
                         myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").addChildEventListener(roomsListener);
                         myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rooms").keepSynced(true);
