@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Objects;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -36,7 +36,7 @@ public class NowFragment extends Fragment implements Observer {
         mRoomsList.setLayoutManager(layoutManager);
         mAdapter = new RoomsAdapter("now");
         mRoomsList.setAdapter(mAdapter);
-        mRoomsList.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL));
+        mRoomsList.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
 
         //prototype
@@ -64,8 +64,9 @@ public class NowFragment extends Fragment implements Observer {
     //Implementation for the Observer interface to update the fragment views
     @Override
     public void update(Observable observable, Object o) {
+        latestReadingTextView.setText(String.format(Locale.US, "%.2g", FirebaseUtils.getInstance().getTotalLatestReading()))
+        ;
+        totalReadingTextView.setText(String.format(Locale.US, "%.4g", FirebaseUtils.getInstance().getTotalReading()));
         mAdapter.notifyDataSetChanged();
-        latestReadingTextView.setText(String.valueOf(FirebaseUtils.getInstance().getTotalLatestReading()));
-        totalReadingTextView.setText(String.valueOf(FirebaseUtils.getInstance().getTotalReading()));
     }
 }

@@ -175,6 +175,9 @@ class FirebaseUtils extends Observable {
                 Object value = dataSnapshot.getValue();
                 String values = value != null ? value.toString() : null;
 
+                String time = dataSnapshot.getKey();
+
+
                 StringTokenizer stringTokenizer = new StringTokenizer(values, ",", false);
 
                 totalLatestReading = 0;
@@ -185,30 +188,27 @@ class FirebaseUtils extends Observable {
                     if (i == 0) totalLatestReading = 0;
                     if (stringTokenizer.hasMoreTokens()) {
                         float reading = Float.parseFloat(stringTokenizer.nextToken());
-                        reading = (float) Math.floor(reading * 100) / 100;
 
                         //add the room reading to the list of readings of that room
                         rooms.get(i).getReadings().add(reading);
+//                        rooms.get(i).getEntries().add(new Entry(reading, Float.parseFloat(time)));
 
                         //increase the sum this month readings by that reading
-                        if (readingBelongsToThisMonth)
+                        if (readingBelongsToThisMonth) {
                             rooms.get(i).addReading(reading);
+                        }
 
                         totalLatestReading += reading;
-                        totalLatestReading = (float) Math.floor(totalLatestReading * 100) / 100;
-//                        PieEntry entry = new PieEntry(rooms.get(i).getThisMonthReading());
-//                        entries.set(i, entry);
                     }
                 }
 
                 if (readingBelongsToThisMonth) {
                     totalReading += (totalLatestReading / 3600);
-                    totalReading = (float) (Math.floor(totalReading * 100000) / 100000);
+                    House.getInstance().setThisMonthReading(House.getInstance().getThisMonthReading() + totalLatestReading);
                 }
 
 
                 for (int i = 0; i < rooms.size(); i++) {
-                    String time = dataSnapshot.getKey();
                     try {
                         Timestamp timestamp = new Timestamp(Long.parseLong(time));
                         rooms.get(i).getTimestampList().add(timestamp);
@@ -353,6 +353,11 @@ class FirebaseUtils extends Observable {
             setChanged();
             notifyObservers(PERIOD_CHANGED);
         }
+    }
+
+    public void update() {
+        setChanged();
+        notifyObservers();
     }
 
     public long getBeginningTime() {

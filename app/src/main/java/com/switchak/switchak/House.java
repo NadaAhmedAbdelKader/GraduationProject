@@ -15,15 +15,17 @@ public class House {
     private static final House ourInstance = new House();
     private final List<Entry> entries;
     private final LineDataSet dataSet;
+    private float thisMonthReading;
 
     public static House getInstance() {
         return ourInstance;
     }
 
     private House() {
+        thisMonthReading = 0;
         entries = new ArrayList<>();
         pieEntries = new ArrayList<>();
-        dataSet = new LineDataSet(entries, "kWatts");
+        dataSet = new LineDataSet(entries, "Watts");
     }
 
     public List<Entry> getEntries() {
@@ -42,4 +44,11 @@ public class House {
         return pieEntries;
     }
 
+    public float getThisMonthReading() {
+        return thisMonthReading;
+    }
+
+    public void setThisMonthReading(float thisMonthReading) {
+        this.thisMonthReading = thisMonthReading;
+    }
 }

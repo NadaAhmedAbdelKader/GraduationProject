@@ -1,5 +1,7 @@
 package com.switchak.switchak;
 
+import com.github.mikephil.charting.data.Entry;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +17,21 @@ class Room {
 
     //Total Readings for each room
     private float thisMonthReading;
+    private float selectedPeriodReading;
     //Variables
     private String roomId;
     private String roomName;
     private boolean power;
     private final List<Float> readings = new ArrayList<>();
     private final List<Timestamp> timestampList = new ArrayList<>();
+    private final List<Entry> entries;
 
     //Constructor that takes room name
     Room(String roomId) {
         this.roomId = roomId;
         thisMonthReading = 0;
+        selectedPeriodReading = 0;
+        entries = new ArrayList<>();
     }
 
 
@@ -63,11 +69,23 @@ class Room {
         return readings;
     }
 
+    public List<Entry> getEntries() {
+        return entries;
+    }
+
     boolean isPower() {
         return power;
     }
 
     void setPower(boolean power) {
         this.power = power;
+    }
+
+    public float getSelectedPeriodReading() {
+        return selectedPeriodReading;
+    }
+
+    public void setSelectedPeriodReading(float selectedPeriodReading) {
+        this.selectedPeriodReading = selectedPeriodReading;
     }
 }

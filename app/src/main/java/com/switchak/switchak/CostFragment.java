@@ -11,15 +11,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,8 +36,7 @@ public class CostFragment extends Fragment implements Observer {
     private PieData pieData;
     private long beginningTime = FirebaseUtils.getInstance().getBeginningTime();
     private long endTime = FirebaseUtils.getInstance().getEndTime();
-    private String totalReading ;
-    private double cost ;
+    private String totalReading;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -44,7 +46,7 @@ public class CostFragment extends Fragment implements Observer {
         RecyclerView mRoomsList = rootView.findViewById(R.id.rv_cost_rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRoomsList.setLayoutManager(layoutManager);
-        mAdapter = new RoomsAdapter("history");
+        mAdapter = new RoomsAdapter("cost");
         mRoomsList.setAdapter(mAdapter);
         mRoomsList.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
@@ -56,13 +58,19 @@ public class CostFragment extends Fragment implements Observer {
         pieChart = rootView.findViewById(R.id.pie_chart);
         pieEntries = House.getInstance().getPieEntries();
 
-        dataSet = new PieDataSet(pieEntries, "Usage percentage");
+        dataSet = new PieDataSet(pieEntries, "Wh");
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         dataSet.setValueTextSize(15f);
         dataSet.setSliceSpace(5);
+//        dataSet.setValueFormatter(new IValueFormatter() {
+//            @Override
+//            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+//                return String.format(Locale.US, "%.2g", getCostFromUsage(value));
+//            }
+//        });
 
 
-        pieChart.setUsePercentValues(true);
+        pieChart.setUsePercentValues(false);
 
 
         // enable rotation of the chart by touch
@@ -91,10 +99,30 @@ public class CostFragment extends Fragment implements Observer {
         FirebaseUtils.getInstance().deleteObserver(this);
     }
 
+    public float getCostFromUsage(float value) {
+        value = House.getInstance().getThisMonthReading() / 1000;
+        float cost = 0;
+
+        if (value >= 0 && value <= 50)
+            cost = value * 0.13f;
+        else if (value >= 51 && value <= 100)
+            cost = value * 0.22f;
+        else if (value > 100 && value <= 200)
+            cost = value * 0.22f;
+        else if (value > 200 && value <= 350)
+            cost = value * 0.45f;
+        else if (value > 350 && value <= 650)
+            cost = value * 0.55f;
+        else if (value > 650 && value <= 1000)
+            cost = value * 0.95f;
+        else if (value > 1000)
+            cost = value * 1.35f;
+        return cost;
+    }
+
     @Override
     public void update(Observable o, Object arg) {
 
-        mAdapter.notifyDataSetChanged();
 
         if (House.getInstance().getPieEntries().size() > 0)
             pieChart.setData(pieData);
@@ -104,13 +132,17 @@ public class CostFragment extends Fragment implements Observer {
             if (timeOfLastReading >= beginningTime
                     && timeOfLastReading < endTime) {
                 for (int i = 0; i < House.getInstance().getRooms().size(); i++) {
-                    pieEntries.set(i, new PieEntry(pieEntries.get(i).getValue() + House.getInstance().getRooms().get(i)
-                            .getReadings().get(House.getInstance().getEntries().size() - 1)));
+                    float newReading = pieEntries.get(i).getValue() + House.getInstance().getRooms().get(i)
+                            .getReadings().get(House.getInstance().getEntries().size() - 1);
+//                    pieEntries.set(i, new PieEntry(getCostFromUsage(newReading)));
+                    pieEntries.set(i, new PieEntry(newReading));
+                    FirebaseUtils.getInstance().getRooms().get(i).setSelectedPeriodReading(newReading);
                 }
                 pieData.notifyDataChanged();
                 pieChart.notifyDataSetChanged();
                 pieChart.invalidate();
             }
+            FirebaseUtils.getInstance().update();
         }
 
 
@@ -125,34 +157,18 @@ public class CostFragment extends Fragment implements Observer {
                     if (timeOfJReading >= beginningTime && timeOfJReading < endTime)
                         roomIReading = roomIReading + House.getInstance().getRooms().get(i).getReadings().get(j);
                 }
+                pieEntries.set(i, new PieEntry(getCostFromUsage(roomIReading)));
                 pieEntries.set(i, new PieEntry(roomIReading));
+//                FirebaseUtils.getInstance().getRooms().get(i).setSelectedPeriodReading(roomIReading);
             }
             pieData.notifyDataChanged();
             pieChart.notifyDataSetChanged();
             pieChart.animateXY(1000, 1000);
+            FirebaseUtils.getInstance().update();
         }
+        mAdapter.notifyDataSetChanged();
     }
 
 
-    public double cost (Observable observe , float value ){
-        totalReading= String.valueOf(FirebaseUtils.getInstance().getTotalLatestReading());
-        value = Float.parseFloat(totalReading);
-        if(value>=0 && value<=50)
-            cost =value * 0.13;
-        else if(value>=51 && value<=100)
-            cost=value*0.22;
-        else if(value>100 && value<=200)
-            cost=value*0.22;
-        else if(value>200 && value<=350)
-            cost=value*0.45;
-        else if(value>350 && value<=650)
-            cost=value*0.55;
-        else if(value>650 && value<=1000)
-            cost=value*0.95;
-        else if(value>1000)
-            cost=value*1.35;
-        return cost ;
-
-    }
 }
 
