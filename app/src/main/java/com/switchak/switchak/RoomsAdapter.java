@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -83,13 +82,14 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         final TextView roomName;
         final TextView roomReading;
         final Switch roomPower;
-        public RadioButton selectionState;
+        final TextView roomCost;
 
         RoomViewHolder(final View itemView, String fragment) {
             super(itemView);
 
             roomName = itemView.findViewById(R.id.tv_room_name);
             roomReading = itemView.findViewById(R.id.tv_room_reading);
+            roomCost = itemView.findViewById(R.id.tv_room_cost);
             roomPower = itemView.findViewById(R.id.switch_room_power);
         }
 
@@ -152,9 +152,10 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             try {
                 if (fragment.equals("history"))
                     roomReading.setText(new DecimalFormat("#.##").format(room.getSelectedPeriodReading()));
-                else if (fragment.equals("cost"))
+                else if (fragment.equals("cost")) {
                     roomReading.setText(new DecimalFormat("#.##").format(room.getSelectedPeriodReading()));
-                else if (fragment.equals("now"))
+                    roomCost.setText(new DecimalFormat("#.##").format(getCostFromUsage(room.getSelectedPeriodReading())) + " LE");
+                } else if (fragment.equals("now"))
                     roomReading.setText(new DecimalFormat("#.##").format(room.getReadings().get(room.getReadings().size() - 1)));
 
             } catch (Exception e) {
