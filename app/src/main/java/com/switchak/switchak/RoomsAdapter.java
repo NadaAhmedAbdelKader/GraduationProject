@@ -34,7 +34,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
     private final List<Room> rooms = FirebaseUtils.getInstance().getRooms();
     private final String fragment;
-    private int lastSelectedPosition = -1;
 
     RoomsAdapter(String fragment) {
         this.fragment = fragment;
@@ -92,7 +91,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             roomName = itemView.findViewById(R.id.tv_room_name);
             roomReading = itemView.findViewById(R.id.tv_room_reading);
             roomPower = itemView.findViewById(R.id.switch_room_power);
-            selectionState = itemView.findViewById(R.id.rb_room_select);
         }
 
         void bind(final Room room) {
@@ -101,59 +99,44 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             else
                 roomName.setText(room.getRoomId());
 
-            if (fragment.equals("history")) {
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (lastSelectedPosition == getAdapterPosition())
-                            lastSelectedPosition = -1;
-                        else
-                            lastSelectedPosition = getAdapterPosition();
-                        notifyDataSetChanged();
-                    }
-                });
 
-                selectionState.setChecked(lastSelectedPosition == getAdapterPosition());
-            }
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
+                    builder.setTitle("Room name");
 
+                    LinearLayout.LayoutParams lp =
+                            new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
-            if (fragment.equals("cost"))
-                itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
-                        builder.setTitle("Room name");
+                    final EditText editText = new EditText(itemView.getContext());
+                    editText.setText(roomName.getText());
 
-                        LinearLayout.LayoutParams lp =
-                                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    editText.setLayoutParams(lp);
 
-                        final EditText editText = new EditText(itemView.getContext());
-                        editText.setText(roomName.getText());
-
-                        editText.setLayoutParams(lp);
-
-                        builder.setView(editText);
+                    builder.setView(editText);
 
 
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                FirebaseDatabase.getInstance().getReference()
-                                        .child(FirebaseAuth.getInstance().getUid()).child("rooms")
-                                        .child(room.getRoomId())
-                                        .child("room_name")
-                                        .setValue(editText.getText().toString());
-                                notifyDataSetChanged();
-                            }
-                        });
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-                        builder.show();
-                        return true;
-                    }
-                });
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            FirebaseDatabase.getInstance().getReference()
+                                    .child(FirebaseAuth.getInstance().getUid()).child("rooms")
+                                    .child(room.getRoomId())
+                                    .child("room_name")
+                                    .setValue(editText.getText().toString());
+                            notifyDataSetChanged();
+                            FirebaseUtils.getInstance().update();
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+                    builder.show();
+                    return true;
+                }
+            });
 
             if (fragment.equals("now")) {
                 roomPower.setChecked(room.isPower());

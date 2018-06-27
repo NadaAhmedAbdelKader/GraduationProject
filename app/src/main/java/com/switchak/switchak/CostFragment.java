@@ -155,7 +155,7 @@ public class CostFragment extends Fragment implements Observer {
             endTime = FirebaseUtils.getInstance().getEndTime();
             for (int i = 0; i < House.getInstance().getRooms().size(); i++) {
                 float roomIReading = 0;
-                for (int j = 0; j < House.getInstance().getEntries().size(); j++) {
+                for (int j = 0; j < House.getInstance().getRooms().get(i).getReadings().size(); j++) {
                     float timeOfJReading = House.getInstance().getEntries().get(j).getX();
                     if (timeOfJReading >= beginningTime && timeOfJReading < endTime)
                         roomIReading = roomIReading + House.getInstance().getRooms().get(i).getReadings().get(j);
