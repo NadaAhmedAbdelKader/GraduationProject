@@ -164,24 +164,24 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         }
 
 
-        public float getCostFromUsage(float value) {
-            value = House.getInstance().getThisMonthReading() / 1000;
+        public float getCostFromUsage(float usage) {
+            float value = House.getInstance().getThisMonthReading() / 1000;
             float cost = 0;
 
             if (value >= 0 && value <= 50)
-                cost = value * 0.13f;
+                cost = usage * 0.13f;
             else if (value >= 51 && value <= 100)
-                cost = value * 0.22f;
+                cost = usage * 0.22f;
             else if (value > 100 && value <= 200)
-                cost = value * 0.22f;
+                cost = usage * 0.22f;
             else if (value > 200 && value <= 350)
-                cost = value * 0.45f;
+                cost = usage * 0.45f;
             else if (value > 350 && value <= 650)
-                cost = value * 0.55f;
+                cost = usage * 0.55f;
             else if (value > 650 && value <= 1000)
-                cost = value * 0.95f;
+                cost = usage * 0.95f;
             else if (value > 1000)
-                cost = value * 1.35f;
+                cost = usage * 1.35f;
             return cost;
         }
     }
