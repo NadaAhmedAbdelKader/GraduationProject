@@ -98,6 +98,7 @@ public class CostFragment extends Fragment implements Observer {
     public float getCostFromUsage(float usage) {
         float value = House.getInstance().getThisMonthReading() / 1000;
         float cost = 0;
+        usage = usage / 1000;
 
         if (value >= 0 && value <= 50)
             cost = usage * 0.13f;
