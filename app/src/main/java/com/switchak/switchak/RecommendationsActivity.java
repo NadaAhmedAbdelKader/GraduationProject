@@ -1,9 +1,8 @@
 package com.switchak.switchak;
 
 import android.annotation.SuppressLint;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,7 +13,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +21,9 @@ public class RecommendationsActivity extends AppCompatActivity {
     private static SeekBar seek_bar;
     private static TextView text_view;
     int count;
+    LinearLayout priorityList;
+    final List<Room> rooms = FirebaseUtils.getInstance().getRooms();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,6 @@ public class RecommendationsActivity extends AppCompatActivity {
 
     public void addSpinner() {
 
-        final List<Room> rooms = FirebaseUtils.getInstance().getRooms();
         List<String> roomsNames = new ArrayList<>();
         final boolean[] spinnerCreated = {false};
         roomsNames.add("Select room");
@@ -81,7 +81,7 @@ public class RecommendationsActivity extends AppCompatActivity {
 
         }
 
-        LinearLayout priorityList = findViewById(R.id.priority_list);
+        priorityList = findViewById(R.id.priority_list);
         Spinner firstPriority = new Spinner(this);
         ArrayAdapter<String> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roomsNames);
         listAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -122,10 +122,43 @@ public class RecommendationsActivity extends AppCompatActivity {
         recbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+                float theta1 = 1;
+                float theta2 = 1;
+                LinearLayout recommendedText = findViewById(R.id.layout_recommended_text);
+                recommendedText.removeAllViews();
+
+
+                for (int i = 0; i < priorityList.getChildCount(); i++) {
+
+                    Spinner spinner = (Spinner) priorityList.getChildAt(i);
+                    int roomIndex = spinner.getSelectedItemPosition() - 1;
+
+                    if (spinner.getSelectedItemPosition() > 0) {
+
+                        float selectedRoomReading = rooms.get(i).getTotalReading() / rooms.get(i).getReadings().size();
+
+                        float totalHours = priorityList.getChildCount() - i * theta1 + selectedRoomReading * theta2;
+
+
+                        TextView rtext = new TextView(recommendedText.getContext());
+                        rtext.setText("The Recommended Optimal Use for your " + spinner.getSelectedItem() + " is " + totalHours + "hrs/month");
+
+                        recommendedText.addView(rtext);
+                    }
+
+
+                }
+
+
             }
 
 
         });
     }
+
+
 }
+
+
+
 
