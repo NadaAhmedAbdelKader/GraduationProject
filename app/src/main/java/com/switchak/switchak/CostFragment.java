@@ -13,11 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -58,12 +62,18 @@ public class CostFragment extends Fragment implements Observer {
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         dataSet.setValueTextSize(15f);
         dataSet.setSliceSpace(5);
-//        dataSet.setValueFormatter(new IValueFormatter() {
-//            @Override
-//            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-//                return String.format(Locale.US, "%.2g", getCostFromUsage(value));
-//            }
-//        });
+
+        dataSet.setValueFormatter(new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                value = value / 3600;
+                if (value < 1000)
+                    return new DecimalFormat("#.##").format(value);
+                else
+                    return new DecimalFormat("#.##").format(value / 1000) + "k";
+
+            }
+        });
 
 
         pieChart.setUsePercentValues(false);
@@ -74,6 +84,7 @@ public class CostFragment extends Fragment implements Observer {
         pieChart.setHighlightPerTapEnabled(true);
 
         pieChart.setEntryLabelColor(Color.WHITE);
+        pieChart.setHighlightPerTapEnabled(false);
 
         pieData = new PieData(dataSet);
 
@@ -96,9 +107,9 @@ public class CostFragment extends Fragment implements Observer {
     }
 
     public float getCostFromUsage(float usage) {
-        float value = House.getInstance().getThisMonthReading() / 1000;
+        float value = House.getInstance().getThisMonthReading() / (3600 * 1000);
         float cost = 0;
-        usage = usage / 1000;
+        usage = usage / (1000 * 3600);
 
         if (value >= 0 && value <= 50)
             cost = usage * 0.13f;

@@ -24,7 +24,7 @@
                 android:layout_gravity="center"
                 android:text="@string/tv_latest_reading_empty"
                 android:textAppearance="@style/TextAppearance.AppCompat"
-                android:textSize="100sp" />
+                android:textSize="72sp" />
 
             <TextView
                 android:layout_width="wrap_content"

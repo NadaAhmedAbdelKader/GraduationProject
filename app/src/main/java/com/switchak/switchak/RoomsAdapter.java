@@ -13,12 +13,15 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Osama on 08/02/2018.
@@ -83,6 +86,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         final TextView roomReading;
         final Switch roomPower;
         final TextView roomCost;
+        final CircleImageView circleImageView;
 
         RoomViewHolder(final View itemView, String fragment) {
             super(itemView);
@@ -91,6 +95,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             roomReading = itemView.findViewById(R.id.tv_room_reading);
             roomCost = itemView.findViewById(R.id.tv_room_cost);
             roomPower = itemView.findViewById(R.id.switch_room_power);
+            circleImageView = itemView.findViewById(R.id.circleImageView);
         }
 
         void bind(final Room room) {
@@ -150,13 +155,24 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             }
 
             try {
+                String selectedPeriodReading;
+                if (room.getSelectedPeriodReading() / (3600 * 1000) < 1)
+                    selectedPeriodReading = new DecimalFormat("#.##").format(room.getSelectedPeriodReading() / 3600) + " Wh";
+                else
+                    selectedPeriodReading = new DecimalFormat("#.##").format(room.getSelectedPeriodReading() / (3600 * 1000)) + " kWh";
+
                 if (fragment.equals("history"))
-                    roomReading.setText(new DecimalFormat("#.##").format(room.getSelectedPeriodReading()));
+                    roomReading.setText(selectedPeriodReading);
                 else if (fragment.equals("cost")) {
-                    roomReading.setText(new DecimalFormat("#.##").format(room.getSelectedPeriodReading()));
-                    roomCost.setText(new DecimalFormat("#.##").format(getCostFromUsage(room.getSelectedPeriodReading())) + " LE");
+                    circleImageView.setCircleBackgroundColor(ColorTemplate.MATERIAL_COLORS[getAdapterPosition()]);
+                    roomReading.setText(selectedPeriodReading);
+                    float cost = getCostFromUsage(room.getSelectedPeriodReading());
+                    if (cost < 1)
+                        roomCost.setText(new DecimalFormat("#.##").format(getCostFromUsage(room.getSelectedPeriodReading()) * 1000) + " PT");
+                    else
+                        roomCost.setText(new DecimalFormat("#.##").format(getCostFromUsage(room.getSelectedPeriodReading())) + " LE");
                 } else if (fragment.equals("now"))
-                    roomReading.setText(new DecimalFormat("#.##").format(room.getReadings().get(room.getReadings().size() - 1)));
+                    roomReading.setText(new DecimalFormat("#.##").format(room.getReadings().get(room.getReadings().size() - 1)) + " W");
 
             } catch (Exception e) {
                 roomReading.setText("");
@@ -165,9 +181,9 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
 
         public float getCostFromUsage(float usage) {
-            float value = House.getInstance().getThisMonthReading() / 1000;
+            float value = House.getInstance().getThisMonthReading() / (3600 * 1000);
             float cost = 0;
-            usage = usage / 1000;
+            usage = usage / (1000 * 3600);
 
             if (value >= 0 && value <= 50)
                 cost = usage * 0.13f;

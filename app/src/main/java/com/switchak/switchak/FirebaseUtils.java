@@ -34,7 +34,6 @@ class FirebaseUtils extends Observable {
 
     private static final FirebaseUtils ourInstance = new FirebaseUtils();
     private float totalLatestReading;
-    private float totalReading;
     private final List<Room> rooms;
     private int roomsCount;
     private final DatabaseReference myRef;
@@ -168,8 +167,6 @@ class FirebaseUtils extends Observable {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        totalReading = 0;
-
         readingsEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -199,12 +196,13 @@ class FirebaseUtils extends Observable {
                             rooms.get(i).addReading(reading);
                         }
 
+                        rooms.get(i).setTotalReading(rooms.get(i).getTotalReading() + reading);
+
                         totalLatestReading += reading;
                     }
                 }
 
                 if (readingBelongsToThisMonth) {
-                    totalReading += (totalLatestReading / 3600);
                     House.getInstance().setThisMonthReading(House.getInstance().getThisMonthReading() + totalLatestReading);
                 }
 
@@ -255,10 +253,6 @@ class FirebaseUtils extends Observable {
 
     float getTotalLatestReading() {
         return totalLatestReading;
-    }
-
-    float getTotalReading() {
-        return totalReading;
     }
 
     List<Room> getRooms() {

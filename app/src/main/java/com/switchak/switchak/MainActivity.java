@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.recommendations) {
             Intent intent = new Intent(MainActivity.this, RecommendationsActivity.class);
             startActivity(intent);
-            finish();
         }
 
         return super.onOptionsItemSelected(item);

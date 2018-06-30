@@ -17,6 +17,7 @@ class Room {
 
     //Total Readings for each room
     private float thisMonthReading;
+    private float totalReading;
     private float selectedPeriodReading;
     //Variables
     private String roomId;
@@ -30,6 +31,7 @@ class Room {
     Room(String roomId) {
         this.roomId = roomId;
         thisMonthReading = 0;
+        totalReading = 0;
         selectedPeriodReading = 0;
         entries = new ArrayList<>();
     }
@@ -42,6 +44,15 @@ class Room {
     //Getters and setters
     float getThisMonthReading() {
         return thisMonthReading;
+    }
+
+
+    float getTotalReading() {
+        return totalReading;
+    }
+
+    void setTotalReading(float totalReading) {
+        this.totalReading = totalReading;
     }
 
     String getRoomId() {

@@ -65,7 +65,7 @@ public class NowFragment extends Fragment implements Observer {
     @Override
     public void update(Observable observable, Object o) {
         latestReadingTextView.setText(new DecimalFormat("#.##").format(FirebaseUtils.getInstance().getTotalLatestReading()));
-        totalReadingTextView.setText(new DecimalFormat("#.####").format(House.getInstance().getThisMonthReading() / 1000) + " kWh");
+        totalReadingTextView.setText(new DecimalFormat("#.####").format(House.getInstance().getThisMonthReading() / (3600 * 1000)) + " kWh");
         mAdapter.notifyDataSetChanged();
     }
 }
