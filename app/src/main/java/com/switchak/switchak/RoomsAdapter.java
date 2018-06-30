@@ -143,6 +143,8 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                 }
             });
 
+            circleImageView.setCircleBackgroundColor(ColorTemplate.MATERIAL_COLORS[getAdapterPosition()]);
+
             if (fragment.equals("now")) {
                 roomPower.setChecked(room.isPower());
                 roomPower.setOnClickListener(new View.OnClickListener() {
@@ -164,11 +166,10 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                 if (fragment.equals("history"))
                     roomReading.setText(selectedPeriodReading);
                 else if (fragment.equals("cost")) {
-                    circleImageView.setCircleBackgroundColor(ColorTemplate.MATERIAL_COLORS[getAdapterPosition()]);
                     roomReading.setText(selectedPeriodReading);
                     float cost = getCostFromUsage(room.getSelectedPeriodReading());
                     if (cost < 1)
-                        roomCost.setText(new DecimalFormat("#.##").format(getCostFromUsage(room.getSelectedPeriodReading()) * 1000) + " PT");
+                        roomCost.setText(new DecimalFormat("#").format(getCostFromUsage(room.getSelectedPeriodReading()) * 100) + " PT");
                     else
                         roomCost.setText(new DecimalFormat("#.##").format(getCostFromUsage(room.getSelectedPeriodReading())) + " LE");
                 } else if (fragment.equals("now"))
