@@ -31,7 +31,7 @@
         <activity
             android:name=".RecommendationsActivity"
             android:label="@string/recommendations"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
     </application>
