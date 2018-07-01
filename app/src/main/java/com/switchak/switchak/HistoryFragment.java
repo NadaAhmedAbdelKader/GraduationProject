@@ -104,7 +104,7 @@ public class HistoryFragment extends Fragment implements Observer {
         chart.setScaleYEnabled(false);
 //        chart.setVisibleXRangeMinimum(2147483647); //max float number 2147483647
         chart.setAutoScaleMinMaxEnabled(true);
-
+        chart.getDescription().setEnabled(false);
         xAxis.setLabelCount(5);
 
 

@@ -20,7 +20,7 @@
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="10000"
+        android:max="5000"
         android:padding="@dimen/appbar_padding_top"
         android:progress="50" />
 

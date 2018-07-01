@@ -82,7 +82,7 @@ public class CostFragment extends Fragment implements Observer {
         // enable rotation of the chart by touch
         pieChart.setRotationEnabled(false);
         pieChart.setHighlightPerTapEnabled(true);
-
+        pieChart.getDescription().setText("Usage for each room in selected period");
         pieChart.setEntryLabelColor(Color.WHITE);
         pieChart.setHighlightPerTapEnabled(false);
 

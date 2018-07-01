@@ -62,7 +62,7 @@ public class RecommendationsActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(RecommendationsActivity.this, "Seek bar progress is : " + progress_value,
+                Toast.makeText(RecommendationsActivity.this, "Seek bar progress is : " + seek_bar.getProgress(),
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -127,9 +127,10 @@ public class RecommendationsActivity extends AppCompatActivity {
         recbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                float theta1 = 1;
-                float theta2 = 1;
-                float theta3= 1;
+                double theta1 = 1;
+                double theta2 = 0.01;
+                double theta3 = 0.1;
+                double theta0 = 50;
                 LinearLayout recommendedText = findViewById(R.id.layout_recommended_text);
                 recommendedText.removeAllViews();
 
@@ -143,7 +144,7 @@ public class RecommendationsActivity extends AppCompatActivity {
 
                         float selectedRoomReading = rooms.get(roomIndex).getTotalReading() / rooms.get(i).getReadings().size();
 
-                        float totalHours = priorityList.getChildCount() - i * theta1 + selectedRoomReading * theta2 + seek_bar.getProgress() * theta3;
+                        double totalHours = theta0 + priorityList.getChildCount() - i * theta1 + selectedRoomReading * theta2 + seek_bar.getProgress() * theta3;
 
 
                         TextView rtext = new TextView(recommendedText.getContext());

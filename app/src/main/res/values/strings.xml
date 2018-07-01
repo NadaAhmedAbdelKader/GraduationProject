@@ -25,7 +25,8 @@
     <string name="tv_latest_reading_unit">Watts</string>
     <string name="tv_total_reading_empty">0.0</string>
     <string name="tv_room_reading_empty">0.0</string>
-    <string name="Budget">budget</string>
+    <string name="Budget">budget : </string>
     <string name="change_period">Change Period</string>
     <string name="recommendations">Recommendations</string>
+    <string name="priority_hint">Choose your priorities from your rooms</string>
 </resources>
