@@ -136,7 +136,7 @@ public class HistoryFragment extends Fragment implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object o) {
+    public void update(Observable observable, Object arg) {
 
         if (House.getInstance().getEntries().size() > 0)
             chart.setData(lineData);
@@ -144,10 +144,12 @@ public class HistoryFragment extends Fragment implements Observer {
         lineDataSet.notifyDataSetChanged();
         lineData.notifyDataChanged();
         chart.notifyDataSetChanged();
-        if (FirebaseUtils.getInstance().getBeginningTime() != chart.getXAxis().getAxisMinimum()
-                || FirebaseUtils.getInstance().getEndTime() != chart.getXAxis().getAxisMaximum()) {
+        if (arg != null && (int) arg == FirebaseUtils.PERIOD_CHANGED) {
             chart.getXAxis().setAxisMinimum(FirebaseUtils.getInstance().getBeginningTime());
-            chart.getXAxis().setAxisMaximum(FirebaseUtils.getInstance().getEndTime());
+            if (FirebaseUtils.getInstance().getEndTime() > Calendar.getInstance().getTime().getTime())
+                chart.getXAxis().resetAxisMaximum();
+            else
+                chart.getXAxis().setAxisMaximum(FirebaseUtils.getInstance().getEndTime());
             chart.fitScreen();
             chart.setVisibleXRangeMinimum(3600000 * 5); //milliseconds in an hour = 3600000, we have 5 X lines
             chart.animateY(1000);

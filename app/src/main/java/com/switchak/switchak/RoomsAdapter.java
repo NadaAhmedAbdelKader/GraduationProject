@@ -163,9 +163,8 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                 else
                     selectedPeriodReading = new DecimalFormat("#.##").format(room.getSelectedPeriodReading() / (3600 * 1000)) + " kWh";
 
-                if (fragment.equals("history"))
-                    roomReading.setText(selectedPeriodReading);
-                else if (fragment.equals("cost")) {
+
+                if (fragment.equals("cost")) {
                     roomReading.setText(selectedPeriodReading);
                     float cost = getCostFromUsage(room.getSelectedPeriodReading());
                     if (cost < 1)
