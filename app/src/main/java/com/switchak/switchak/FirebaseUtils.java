@@ -125,8 +125,8 @@ class FirebaseUtils extends Observable {
                     if (dataSnapshot.hasChild("power"))
                         room.setPower(dataSnapshot.child("power").getValue(Integer.class) > 0);
                     // TODO: 07/03/2018 notify rooms adapters that a room is changed and implement the update
-                    //notifyItemChanged(index);
-                    Log.e("room item changed", String.valueOf(room.isPower()) + dataSnapshot.getKey());
+                    setChanged();
+                    notifyObservers();
                 }
             }
 

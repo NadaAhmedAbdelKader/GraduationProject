@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +85,9 @@ public class RecommendationsActivity extends AppCompatActivity {
 
         priorityList = findViewById(R.id.priority_list);
         Spinner firstPriority = new Spinner(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(16, 16, 16, 16);
+        firstPriority.setLayoutParams(lp);
         ArrayAdapter<String> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roomsNames);
         listAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         priorityList.addView(firstPriority);
@@ -117,7 +122,7 @@ public class RecommendationsActivity extends AppCompatActivity {
         LinearLayout buttonLayout = findViewById(R.id.button_layout);
         Button recbutton = new Button(this);
         buttonLayout.addView(recbutton);
-        recbutton.setText("Recommendation");
+        recbutton.setText("Recommend");
 
         recbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -136,13 +141,18 @@ public class RecommendationsActivity extends AppCompatActivity {
 
                     if (spinner.getSelectedItemPosition() > 0) {
 
-                        float selectedRoomReading = rooms.get(i).getTotalReading() / rooms.get(i).getReadings().size();
+                        float selectedRoomReading = rooms.get(roomIndex).getTotalReading() / rooms.get(i).getReadings().size();
 
                         float totalHours = priorityList.getChildCount() - i * theta1 + selectedRoomReading * theta2 + seek_bar.getProgress() * theta3;
 
 
                         TextView rtext = new TextView(recommendedText.getContext());
-                        rtext.setText("The Recommended Optimal Use for your " + spinner.getSelectedItem() + " is " + totalHours + "hrs/month");
+                        rtext.setText("Optimal Use for " + spinner.getSelectedItem() + " is "
+                                + new DecimalFormat("#.##").format(totalHours)
+                                + " hrs/month");
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        lp.setMargins(16, 16, 16, 16);
+                        rtext.setLayoutParams(lp);
 
                         recommendedText.addView(rtext);
                     }
