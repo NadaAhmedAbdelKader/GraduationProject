@@ -124,6 +124,7 @@ public class RecommendationsActivity extends AppCompatActivity {
 
                 float theta1 = 1;
                 float theta2 = 1;
+                float theta3= 1;
                 LinearLayout recommendedText = findViewById(R.id.layout_recommended_text);
                 recommendedText.removeAllViews();
 
@@ -137,7 +138,7 @@ public class RecommendationsActivity extends AppCompatActivity {
 
                         float selectedRoomReading = rooms.get(i).getTotalReading() / rooms.get(i).getReadings().size();
 
-                        float totalHours = priorityList.getChildCount() - i * theta1 + selectedRoomReading * theta2;
+                        float totalHours = priorityList.getChildCount() - i * theta1 + selectedRoomReading * theta2 + seek_bar.getProgress() * theta3;
 
 
                         TextView rtext = new TextView(recommendedText.getContext());
